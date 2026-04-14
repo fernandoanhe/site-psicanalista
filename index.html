@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[NOME] — Psicanalista Online | Atendimento Individual</title>
+  <meta name="description" content="Psicanalista online com [X] anos de experiência. Atendimento individual para adultos. Ansiedade, depressão, relacionamentos e autoconhecimento. Agende sua sessão.">
+  <meta name="keywords" content="psicanalista online, psicanálise online, terapia online, ansiedade, depressão, autoconhecimento, atendimento psicológico online">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="[NOME]">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="[NOME] — Psicanalista Online">
+  <meta property="og:description" content="Você pode entender suas questões emocionais, viver relacionamentos saudáveis com tranquilidade. Agende sua sessão online.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://[DOMINIO].com.br">
+  <meta property="og:image" content="https://[DOMINIO].com.br/og-image.jpg">
+  <meta property="og:locale" content="pt_BR">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="[NOME] — Psicanalista Online">
+  <meta name="twitter:description" content="Você pode entender suas questões emocionais, viver relacionamentos saudáveis com tranquilidade.">
+
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "[NOME]",
+    "jobTitle": "Psicanalista",
+    "description": "Psicanalista online com [X] anos de experiência. Atendimento individual para adultos.",
+    "url": "https://[DOMINIO].com.br",
+    "telephone": "[TELEFONE]",
+    "email": "[EMAIL]",
+    "knowsAbout": ["Psicanálise", "Ansiedade", "Depressão", "Autoconhecimento", "Relacionamentos"],
+    "hasCredential": {
+      "@type": "EducationalOccupationalCredential",
+      "credentialCategory": "CRP",
+      "recognizedBy": {
+        "@type": "Organization",
+        "name": "Conselho Federal de Psicologia"
+      }
+    }
+  }
+  </script>
+
+  <link rel="canonical" href="https://[DOMINIO].com.br">
+  <!-- robots.txt e sitemap.xml devem ser criados na raiz do servidor -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ============================================================
+       DESIGN TOKENS
+    ============================================================ */
+    :root {
+      --font-heading: 'Cormorant Garamond', Georgia, serif;
+      --font-body:    'Open Sans', system-ui, sans-serif;
+
+      --color-primary:       #C25E00;
+      --color-primary-hover: #A34F00;
+      --color-accent-light:  #F5D5B0;
+      --color-accent-warm:   #D4956A;
+
+      --color-bg-page:  #FFFFFF;
+      --color-bg-alt:   #FDF5EE;
+      --color-bg-dark:  #1E1510;
+      --color-bg-card:  #FAF0E6;
+
+      --color-text-primary: #1E1510;
+      --color-text-body:    #4A3828;
+      --color-text-muted:   #7A6050;
+      --color-text-hint:    #A08878;
+      --color-text-on-dark: #F5EBE0;
+
+      --color-border:      #E8D8C8;
+      --color-border-dark: #5A3E2A;
+
+      --color-success: #2E7D32;
+      --color-error:   #C62828;
+
+      --border-radius-sm: 5px;
+      --border-radius-md: 10px;
+      --border-radius-lg: 14px;
+      --button-radius:    10px;
+
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
+      --shadow-hover: 0 8px 24px rgba(194,94,0,0.12);
+      --shadow-dark:  rgba(0,0,0,0.5) 0px 0px 15px 0px;
+
+      --max-width:  900px;
+      --gap-grid:   16px;
+      --gap-large:  50px;
+    }
+
+    /* ============================================================
+       GLOBAL — DETALHES
+    ============================================================ */
+    ::selection { background: rgba(194,94,0,0.2); color: #1E1510; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #FDF5EE; }
+    ::-webkit-scrollbar-thumb { background: #C25E00; border-radius: 3px; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-body);
+      background-color: var(--color-bg-page);
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    a { color: inherit; text-decoration: none; cursor: pointer; }
+    img { max-width: 100%; display: block; }
+    button { cursor: pointer; }
+
+    /* ============================================================
+       SECTION ANIMATE
+    ============================================================ */
+    .section-animate {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .section-animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================================
+       SECTION LABEL
+    ============================================================ */
+    .section-label {
+      display: inline-block;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--color-primary);
+      margin-bottom: 8px;
+      border-left: 2px solid var(--color-primary);
+      padding-left: 10px;
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn-primary {
+      display: inline-block;
+      background: var(--color-primary);
+      color: #fff;
+      padding: 14px 40px;
+      border-radius: var(--button-radius);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(194,94,0,0.3);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-align: center;
+    }
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+      box-shadow: 0 6px 20px rgba(194,94,0,0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      background: transparent;
+      color: var(--color-primary);
+      border: 1.5px solid var(--color-primary);
+      padding: 12px 36px;
+      border-radius: var(--button-radius);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-align: center;
+    }
+    .btn-secondary:hover {
+      background: rgba(194,94,0,0.06);
+      box-shadow: 0 4px 14px rgba(194,94,0,0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-light {
+      display: inline-block;
+      background: var(--color-accent-warm);
+      color: var(--color-bg-dark);
+      border: none;
+      padding: 14px 40px;
+      border-radius: var(--button-radius);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(194,94,0,0.25);
+      transition: opacity 0.2s, box-shadow 0.2s, transform 0.2s;
+      text-align: center;
+    }
+    .btn-light:hover {
+      opacity: 0.88;
+      transform: translateY(-1px);
+    }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(194,94,0,0.15);
+      transition: box-shadow 0.3s;
+    }
+    .nav.scrolled {
+      box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-logo-dot {
+      color: var(--color-primary);
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--color-text-body);
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+    .nav-links a:hover { color: var(--color-primary); }
+
+    .nav-badge {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-primary);
+      background: #FDF5EE;
+      border: 1px solid rgba(194,94,0,0.25);
+      border-radius: 20px;
+      padding: 5px 14px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--color-text-primary);
+      transition: transform 0.3s, opacity 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .nav-mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: rgba(255,255,255,0.98);
+      border-top: 1px solid rgba(194,94,0,0.1);
+      padding: 8px 40px 20px;
+    }
+    .nav-mobile-menu.open { display: flex; }
+    .nav-mobile-menu a {
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-body);
+      padding: 13px 0;
+      border-bottom: 1px solid var(--color-border);
+      transition: color 0.2s;
+    }
+    .nav-mobile-menu a:last-child { border-bottom: none; }
+    .nav-mobile-menu a:hover { color: var(--color-primary); }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      position: relative;
+      background-image: url("https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=80");
+      background-size: cover;
+      background-position: center 40%;
+      padding: 130px 40px;
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(30,20,10,0.55), rgba(20,12,5,0.75));
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Label no hero — sobrepõe o .section-label base */
+    .hero .section-label {
+      color: rgba(255,255,255,0.65);
+      border-left-color: rgba(255,255,255,0.4);
+      display: block;
+    }
+
+    .hero h1 {
+      font-size: 52px;
+      font-weight: 500;
+      color: #FFFFFF;
+      line-height: 1.2;
+      margin-bottom: 0;
+      margin-top: 8px;
+    }
+    .hero h1 em { font-style: italic; }
+
+    .hero .hero-subtitle {
+      font-size: 17px;
+      color: rgba(255,255,255,0.80);
+      margin-top: 20px;
+      margin-bottom: 36px;
+      line-height: 1.6;
+    }
+
+    .hero .btn-primary {
+      padding: 16px 48px;
+      font-size: 14px;
+      box-shadow: 0 4px 20px rgba(194,94,0,0.45);
+    }
+
+    /* ============================================================
+       SOBRE MIM
+    ============================================================ */
+    .sobre {
+      padding: 88px 40px;
+      background: var(--color-bg-page);
+      border-bottom: 1px solid #F0E0D0;
+    }
+    .sobre-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: var(--gap-large);
+      align-items: start;
+    }
+    .sobre-photo {
+      background: linear-gradient(135deg, #F5D5B0, #E8C090);
+      border-radius: 12px;
+      height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      border: 2px solid rgba(194,94,0,0.2);
+      overflow: hidden;
+    }
+    .sobre-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+    }
+    .sobre-content h2 {
+      font-size: 34px;
+      font-style: italic;
+      font-weight: 500;
+      margin-bottom: 18px;
+    }
+    .sobre-content p {
+      font-size: 14px;
+      color: var(--color-text-body);
+      margin-bottom: 14px;
+      line-height: 1.8;
+    }
+    .sobre-counters {
+      display: flex;
+      gap: 40px;
+      margin-top: 30px;
+      padding-top: 24px;
+      border-top: 1px solid #E8D8C8;
+    }
+    .counter-item { display: flex; flex-direction: column; gap: 4px; }
+    .counter-value {
+      font-family: var(--font-heading);
+      font-size: 48px;
+      font-weight: 500;
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .counter-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ============================================================
+       ESPECIALIDADES
+    ============================================================ */
+    .especialidades {
+      background: #FDF5EE;
+      padding: 88px 40px;
+    }
+    .especialidades-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .especialidades-header { margin-bottom: 40px; }
+    .especialidades-header h2 {
+      font-size: 40px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+      margin-bottom: 0;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap-grid);
+      margin-bottom: 44px;
+    }
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E8D8C8;
+      border-radius: var(--border-radius-md);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-card);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: rgba(194,94,0,0.3);
+    }
+    .card-icon {
+      font-size: 20px;
+      color: var(--color-primary);
+      margin-bottom: 14px;
+    }
+    .card h3 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 0;
+    }
+    .card-line {
+      width: 32px;
+      height: 2px;
+      background: var(--color-primary);
+      margin: 10px 0 14px;
+      border-radius: 1px;
+    }
+    .card p {
+      font-size: 14px;
+      color: var(--color-text-body);
+      line-height: 1.75;
+    }
+    .section-cta { text-align: center; }
+
+    /* ============================================================
+       TERAPIA ONLINE
+    ============================================================ */
+    .online {
+      background-color: #1E1510;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      padding: 88px 40px;
+    }
+    .online-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .online .section-label {
+      color: var(--color-accent-warm);
+      border-left-color: var(--color-accent-warm);
+    }
+    .online-header h2 {
+      font-size: 40px;
+      font-weight: 500;
+      color: var(--color-text-on-dark);
+      margin-bottom: 12px;
+    }
+    .online-header p {
+      font-size: 15px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 44px;
+    }
+
+    .cards-grid-dark {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap-grid);
+      margin-bottom: 44px;
+    }
+    .card-dark {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--border-radius-md);
+      padding: 26px 22px;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .card-dark:hover {
+      background: rgba(194,94,0,0.1);
+      border-color: rgba(194,94,0,0.3);
+    }
+    .card-dark-icon {
+      font-size: 20px;
+      color: var(--color-primary);
+      margin-bottom: 14px;
+    }
+    .card-dark h4 {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 500;
+      color: #F5D5B0;
+      margin-bottom: 10px;
+    }
+    .card-dark p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       DEPOIMENTOS
+    ============================================================ */
+    .depoimentos {
+      background: #FFFFFF;
+      padding: 88px 40px;
+    }
+    .depoimentos-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .depoimentos-header { margin-bottom: 44px; }
+    .depoimentos-header h2 {
+      font-size: 40px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.2;
+    }
+
+    .depoimentos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap-grid);
+    }
+    .depoimento-card {
+      background: #FFFFFF;
+      border-radius: var(--border-radius-md);
+      padding: 32px 26px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      border: 1px solid var(--color-border);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .depoimento-card:hover {
+      box-shadow: 0 6px 24px rgba(194,94,0,0.1);
+      transform: translateY(-2px);
+    }
+    .depoimento-quote {
+      font-family: var(--font-heading);
+      font-size: 72px;
+      line-height: 0.8;
+      color: #F5D5B0;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .depoimento-text {
+      font-size: 14px;
+      font-style: italic;
+      color: var(--color-text-body);
+      line-height: 1.8;
+      flex: 1;
+      margin-bottom: 20px;
+    }
+    .depoimento-author {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      border-top: 1px solid #E8D8C8;
+      padding-top: 16px;
+      display: block;
+    }
+
+    /* ============================================================
+       CTA FINAL
+    ============================================================ */
+    .cta-final {
+      position: relative;
+      background-image: url("https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=1600&q=80");
+      background-size: cover;
+      background-position: center;
+      padding: 120px 40px;
+      text-align: center;
+    }
+    .cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(20,12,5,0.60), rgba(30,18,8,0.80));
+    }
+    .cta-final-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    .cta-final h2 {
+      font-size: 46px;
+      font-weight: 500;
+      font-style: italic;
+      color: #FFFFFF;
+      line-height: 1.25;
+      margin-bottom: 16px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cta-final p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 36px;
+    }
+    .cta-final .btn-primary {
+      box-shadow: 0 6px 28px rgba(194,94,0,0.50);
+    }
+
+    /* ============================================================
+       AGENDAMENTO
+    ============================================================ */
+    .agendamento {
+      background: #FDF5EE;
+      padding: 88px 40px;
+    }
+    .agendamento-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+    }
+    .agendamento-header { margin-bottom: 44px; }
+    .agendamento-header h2 {
+      font-size: 36px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 10px;
+    }
+    .agendamento-header p {
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+
+    .agendamento-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* Calendar */
+    .calendar {
+      background: #FFFFFF;
+      border: 1px solid #E8D8C8;
+      border-radius: var(--border-radius-md);
+      padding: 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .calendar-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      text-transform: capitalize;
+    }
+    .calendar-nav-btn {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--color-text-muted);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .calendar-nav-btn:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .calendar-weekday {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-hint);
+      text-align: center;
+      padding: 4px 0;
+    }
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+      color: var(--color-text-body);
+    }
+    .calendar-day.empty { cursor: default; }
+    .calendar-day.past {
+      color: var(--color-text-hint);
+      cursor: not-allowed;
+    }
+    .calendar-day.available {
+      background: #F5D5B0;
+      color: #7A3800;
+      font-weight: 600;
+    }
+    .calendar-day.available:hover {
+      background: #EAC090;
+    }
+    .calendar-day.today {
+      outline: 1.5px solid var(--color-primary);
+      outline-offset: -1px;
+    }
+    .calendar-day.selected {
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      box-shadow: 0 2px 8px rgba(194,94,0,0.4);
+    }
+
+    /* Timeslots */
+    .timeslots { margin-top: 20px; }
+    .timeslots-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+    .timeslots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .timeslot {
+      background: #fff;
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius-sm);
+      padding: 10px 8px;
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--color-text-body);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .timeslot:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .timeslot.selected {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: #fff;
+    }
+
+    /* Formulário */
+    .form-agendamento { display: flex; flex-direction: column; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+    }
+    .form-input {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--color-text-primary);
+      background: #fff;
+      border: 1px solid #E8D8C8;
+      border-radius: 8px;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(194,94,0,0.1);
+    }
+    .form-input::placeholder { color: var(--color-text-hint); }
+    .form-input[readonly] {
+      background: var(--color-bg-card);
+      color: var(--color-text-muted);
+      cursor: default;
+    }
+    .form-input.error { border-color: var(--color-error); }
+    .form-error-msg {
+      font-size: 12px;
+      color: var(--color-error);
+      display: none;
+    }
+    .form-error-msg.visible { display: block; }
+
+    /* Payment toggle */
+    .payment-toggle {
+      display: flex;
+      border: 1.5px solid #E8D8C8;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .payment-option {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+      cursor: pointer;
+      background: #fff;
+      color: var(--color-text-muted);
+      border: none;
+      transition: background 0.2s, color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .payment-option.active {
+      background: rgba(194,94,0,0.06);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .form-caption {
+      font-size: 12px;
+      color: var(--color-text-hint);
+      text-align: center;
+      margin-top: -6px;
+    }
+
+    .form-success {
+      display: none;
+      background: #f0faf0;
+      border: 1px solid var(--color-success);
+      border-radius: var(--border-radius-md);
+      padding: 28px;
+      text-align: center;
+    }
+    .form-success.visible { display: block; }
+    .form-success .success-icon {
+      font-size: 32px;
+      color: var(--color-success);
+      margin-bottom: 12px;
+    }
+    .form-success p {
+      font-size: 15px;
+      color: var(--color-success);
+      line-height: 1.6;
+    }
+
+    /* ============================================================
+       RODAPÉ
+    ============================================================ */
+    .footer {
+      background: #1E1510;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding: 40px 40px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .footer-brand { display: flex; flex-direction: column; gap: 6px; }
+    .footer-name {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 500;
+      color: #F5D5B0;
+    }
+    .footer-role {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+    }
+    .footer-crp {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      align-self: center;
+    }
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+    .footer-links-list {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .footer-links-list a {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+      transition: color 0.2s;
+    }
+    .footer-links-list a:hover { color: var(--color-primary); }
+    .footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ============================================================
+       RESPONSIVO — TABLET
+    ============================================================ */
+    @media (max-width: 1024px) {
+      .sobre-inner { grid-template-columns: 280px 1fr; }
+    }
+
+    /* ============================================================
+       RESPONSIVO — MOBILE
+    ============================================================ */
+    @media (max-width: 768px) {
+      /* Nav */
+      .nav-inner { padding: 0 20px; }
+      .nav-links, .nav-badge { display: none; }
+      .nav-hamburger { display: flex; }
+
+      /* Hero */
+      .hero { padding: 80px 20px; min-height: 70vh; }
+      .hero h1 { font-size: 32px; }
+      .hero .hero-subtitle { font-size: 15px; }
+      .hero .btn-primary { padding: 14px 32px; }
+
+      /* Sobre */
+      .sobre { padding: 56px 20px; }
+      .sobre-inner { grid-template-columns: 1fr; gap: 28px; }
+      .sobre-photo { height: 280px; }
+
+      /* Especialidades */
+      .especialidades { padding: 56px 20px; }
+      .especialidades-header h2 { font-size: 30px; }
+      .cards-grid { grid-template-columns: 1fr; }
+
+      /* Terapia online */
+      .online { padding: 56px 20px; }
+      .online-header h2 { font-size: 30px; }
+      .cards-grid-dark { grid-template-columns: 1fr; }
+
+      /* Depoimentos */
+      .depoimentos { padding: 56px 20px; }
+      .depoimentos-header h2 { font-size: 30px; }
+      .depoimentos-grid { grid-template-columns: 1fr; }
+
+      /* CTA */
+      .cta-final { padding: 56px 20px; }
+      .cta-final h2 { font-size: 30px; }
+
+      /* Agendamento */
+      .agendamento { padding: 56px 20px; }
+      .agendamento-header h2 { font-size: 28px; }
+      .agendamento-grid { grid-template-columns: 1fr; }
+
+      /* Footer */
+      .footer { padding: 36px 20px; }
+      .footer-inner { flex-direction: column; gap: 20px; }
+      .footer-links { align-items: flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       NAV
+  ============================================================ -->
+  <header>
+    <nav class="nav" id="nav" role="navigation" aria-label="Navegação principal">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo">
+          [NOME]<span class="nav-logo-dot" aria-hidden="true">·</span>
+        </a>
+
+        <ul class="nav-links">
+          <li><a href="#sobre">Sobre Mim</a></li>
+          <li><a href="#especialidades">Especialidades</a></li>
+          <li><a href="#online">Terapia Online</a></li>
+          <li><a href="#depoimentos">Depoimentos</a></li>
+        </ul>
+
+        <span class="nav-badge">Apenas particular. Não trabalhamos com convênio.</span>
+
+        <button class="nav-hamburger" id="hamburger"
+                aria-label="Abrir menu de navegação"
+                aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
+      <div class="nav-mobile-menu" id="mobileMenu" aria-hidden="true">
+        <a href="#sobre"          class="mobile-link">Sobre Mim</a>
+        <a href="#especialidades" class="mobile-link">Especialidades</a>
+        <a href="#online"         class="mobile-link">Terapia Online</a>
+        <a href="#depoimentos"    class="mobile-link">Depoimentos</a>
+        <a href="#agendar"        class="mobile-link">Agendar Sessão</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         HERO
+    ============================================================ -->
+    <section class="hero" aria-label="Apresentação">
+      <div class="hero-inner">
+        <span class="section-label">Psicanalista Online</span>
+        <h1>
+          Você pode <em>entender suas questões emocionais</em>,
+          viver relacionamentos saudáveis com tranquilidade.
+        </h1>
+        <p class="hero-subtitle">O primeiro passo é o mais importante. Dê ele hoje.</p>
+        <a href="#agendar" class="btn-primary">
+          <i class="fa-solid fa-calendar-check" aria-hidden="true" style="margin-right:8px;"></i>
+          Quero agendar minha sessão
+        </a>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SOBRE MIM
+    ============================================================ -->
+    <section class="sobre section-animate" id="sobre" aria-label="Sobre mim">
+      <div class="sobre-inner">
+
+        <div class="sobre-photo">
+          <!-- Substitua pelo elemento abaixo quando tiver a foto:
+               <img src="./assets/foto.jpg" alt="[NOME], psicanalista online"> -->
+          <span>[ Sua foto aqui ]</span>
+        </div>
+
+        <div class="sobre-content">
+          <span class="section-label">Sobre mim</span>
+          <h2>[NOME]</h2>
+          <p>Olá, eu sou [Nome]. Há mais de X anos acompanho pessoas que buscam se entender melhor — e esse trabalho ainda me move profundamente todos os dias.</p>
+          <p>Escolhi a Psicanálise porque acredito que cada pessoa carrega uma história única, e que só quando nos aproximamos dela com cuidado e escuta é que algo verdadeiro pode se transformar.</p>
+          <p>Atendo adultos e idosos, com atenção à diversidade, em um espaço de ética, sigilo e comprometimento real com o seu processo.</p>
+
+          <div class="sobre-counters">
+            <div class="counter-item">
+              <span class="counter-value"
+                    data-target="10"
+                    data-prefix="+"
+                    id="counter-anos">+0</span>
+              <span class="counter-label">Anos de Experiência</span>
+            </div>
+            <div class="counter-item">
+              <span class="counter-value"
+                    data-target="1000"
+                    data-prefix="+"
+                    id="counter-pacientes">+0</span>
+              <span class="counter-label">Pacientes Atendidos</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         ESPECIALIDADES
+    ============================================================ -->
+    <section class="especialidades section-animate" id="especialidades" aria-label="Especialidades">
+      <div class="especialidades-inner">
+
+        <div class="especialidades-header">
+          <span class="section-label">Especialidades</span>
+          <h2>Como posso te ajudar?</h2>
+        </div>
+
+        <div class="cards-grid">
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-heart-pulse"></i></div>
+            <h3>Ansiedade</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>Aquela sensação constante de que algo ruim está prestes a acontecer. O corpo em alerta, a mente acelerada, a dificuldade de simplesmente estar presente.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-cloud-rain"></i></div>
+            <h3>Depressão</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>Mais do que tristeza, é um peso que torna tudo difícil — levantar, sentir, querer. Um vazio que parece não ter explicação.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-bolt"></i></div>
+            <h3>Estresse</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>Quando a pressão acumula e o corpo começa a cobrar: cansaço, irritação, sono alterado, sensação de estar sempre no limite.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-user-minus"></i></div>
+            <h3>Baixa autoestima</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>A voz interna que diminui, que duvida, que compara. A dificuldade de se sentir suficiente do jeito que você é.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-people-arrows"></i></div>
+            <h3>Relacionamentos</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>Padrões que se repetem, comunicação que falha, distância que cresce. Quando as relações mais importantes começam a doer.</p>
+          </article>
+          <article class="card">
+            <div class="card-icon" aria-hidden="true"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+            <h3>Autoconhecimento</h3>
+            <div class="card-line" aria-hidden="true"></div>
+            <p>Para quem sente que existe algo mais a entender sobre si mesmo — seus padrões, seus limites, seus desejos mais verdadeiros.</p>
+          </article>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TERAPIA ONLINE
+    ============================================================ -->
+    <section class="online section-animate" id="online" aria-label="Terapia online">
+      <div class="online-inner">
+
+        <div class="online-header">
+          <span class="section-label">Terapia Online</span>
+          <h2>Cuide de você sem sair de onde está</h2>
+          <p>O atendimento online tem a mesma profundidade — com muito mais liberdade para você.</p>
+        </div>
+
+        <div class="cards-grid-dark">
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C25E00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <h4>Conforto</h4>
+            <p>Sua casa já é um espaço de confiança. Ser atendido nela pode tornar o processo ainda mais acolhedor e genuíno.</p>
+          </div>
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-route"></i></div>
+            <h4>Sem deslocamento</h4>
+            <p>Sem trânsito, sem sala de espera. Você chega na hora, de onde estiver.</p>
+          </div>
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-mobile-screen"></i></div>
+            <h4>Praticidade</h4>
+            <p>Celular, computador ou tablet — você escolhe o que funciona melhor para você.</p>
+          </div>
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-brain"></i></div>
+            <h4>Profundidade</h4>
+            <p>Alguns assuntos ficam mais fáceis de tocar quando estamos num ambiente familiar. O online não diminui o processo, muitas vezes o facilita.</p>
+          </div>
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-clock"></i></div>
+            <h4>Flexibilidade</h4>
+            <p>Horários pensados para caber na sua rotina, não o contrário.</p>
+          </div>
+          <div class="card-dark">
+            <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></div>
+            <h4>Sigilo e ética</h4>
+            <p>O atendimento online é regulamentado pelo Conselho Federal de Psicologia e segue todas as normas de sigilo profissional.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA FINAL
+    ============================================================ -->
+    <section class="cta-final section-animate" aria-label="Chamada para ação">
+      <div class="cta-final-inner">
+        <h2>Você pode entender suas emoções e saber lidar com elas.</h2>
+        <p>Não adie mais. Sua saúde mental merece atenção agora.</p>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         AGENDAMENTO
+    ============================================================ -->
+    <section class="agendamento section-animate" id="agendar" aria-label="Agendamento de sessão">
+      <div class="agendamento-inner">
+
+        <div class="agendamento-header">
+          <span class="section-label">Agendamento</span>
+          <h2>Escolha seu dia e horário</h2>
+          <p>
+            <i class="fa-solid fa-video" aria-hidden="true"></i> Sessão online &nbsp;·&nbsp;
+            <i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro &nbsp;·&nbsp;
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i> Confirmação por e-mail e WhatsApp
+          </p>
+        </div>
+
+        <div class="agendamento-grid">
+
+          <!-- Calendário -->
+          <div>
+            <div class="calendar">
+              <div class="calendar-header">
+                <button class="calendar-nav-btn" id="prevMonth" aria-label="Mês anterior">
+                  <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <span class="calendar-title" id="calendarTitle"></span>
+                <button class="calendar-nav-btn" id="nextMonth" aria-label="Próximo mês">
+                  <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="calendar-weekdays" role="row">
+                <span class="calendar-weekday">Dom</span>
+                <span class="calendar-weekday">Seg</span>
+                <span class="calendar-weekday">Ter</span>
+                <span class="calendar-weekday">Qua</span>
+                <span class="calendar-weekday">Qui</span>
+                <span class="calendar-weekday">Sex</span>
+                <span class="calendar-weekday">Sáb</span>
+              </div>
+
+              <div class="calendar-days" id="calendarDays" role="grid"></div>
+            </div>
+
+            <div class="timeslots" id="timeslotsSection" style="display:none;">
+              <p class="timeslots-label">Horários disponíveis</p>
+              <div class="timeslots-grid" id="timeslotsGrid"></div>
+            </div>
+          </div>
+
+          <!-- Formulário -->
+          <div>
+            <form class="form-agendamento" id="formAgendamento" novalidate>
+
+              <div class="form-group">
+                <label class="form-label" for="nome">Nome completo</label>
+                <input class="form-input" type="text" id="nome" name="nome"
+                       placeholder="Seu nome completo" autocomplete="name">
+                <span class="form-error-msg" id="nome-error">Por favor, informe seu nome.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="email">E-mail</label>
+                <input class="form-input" type="email" id="email" name="email"
+                       placeholder="seu@email.com" autocomplete="email">
+                <span class="form-error-msg" id="email-error">Por favor, informe um e-mail válido.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="whatsapp">WhatsApp</label>
+                <input class="form-input" type="tel" id="whatsapp" name="whatsapp"
+                       placeholder="(00) 00000-0000" autocomplete="tel">
+                <span class="form-error-msg" id="whatsapp-error">Por favor, informe seu WhatsApp.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sessao">Sessão selecionada</label>
+                <input class="form-input" type="text" id="sessao" name="sessao"
+                       readonly placeholder="Selecione um dia e horário no calendário">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Forma de pagamento</label>
+                <div class="payment-toggle" role="group" aria-label="Forma de pagamento">
+                  <button type="button" class="payment-option active"
+                          id="payPix" aria-pressed="true">
+                    <i class="fa-brands fa-pix" aria-hidden="true"></i> Pix
+                  </button>
+                  <button type="button" class="payment-option"
+                          id="payCard" aria-pressed="false">
+                    <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Cartão de crédito
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary" style="width:100%;">
+                <i class="fa-solid fa-check" aria-hidden="true" style="margin-right:8px;"></i>
+                Confirmar agendamento
+              </button>
+
+              <p class="form-caption">
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                Você receberá a confirmação por e-mail e WhatsApp
+              </p>
+
+            </form>
+
+            <div class="form-success" id="formSuccess" role="alert">
+              <div class="success-icon">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+              </div>
+              <p>Recebemos sua solicitação! Em breve entraremos em contato para confirmar.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       RODAPÉ
+  ============================================================ -->
+  <footer class="footer" aria-label="Rodapé">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <span class="footer-name">[NOME]</span>
+        <span class="footer-role">Psicanalista</span>
+      </div>
+
+      <div class="footer-crp">CRP XX / XXXXX</div>
+
+      <div class="footer-links">
+        <ul class="footer-links-list">
+          <li><a href="#">Política de privacidade</a></li>
+          <li><a href="#agendar">Contato</a></li>
+        </ul>
+        <p class="footer-copy">© 2026 — Todos os direitos reservados</p>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ============================================================
+       1. NAV — efeito ao rolar
+    ============================================================ */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    }, { passive: true });
+
+    /* ============================================================
+       2. Mobile menu hamburguer
+    ============================================================ */
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      hamburger.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', String(isOpen));
+      mobileMenu.setAttribute('aria-hidden', String(!isOpen));
+    });
+
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+      });
+    });
+
+    /* ============================================================
+       3. Contadores animados
+    ============================================================ */
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function animateCounter(el, target, duration) {
+      const prefix    = el.dataset.prefix || '';
+      const startTime = performance.now();
+
+      function tick(now) {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const value    = Math.round(easeOutCubic(progress) * target);
+        el.textContent = prefix + (target >= 1000 ? value.toLocaleString('pt-BR') : value);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const el = entry.target;
+          animateCounter(el, parseInt(el.dataset.target, 10), 1500);
+          counterObserver.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+    /* ============================================================
+       4. Animações de entrada via IntersectionObserver
+    ============================================================ */
+    const animObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          animObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.section-animate').forEach(el => animObserver.observe(el));
+
+    /* ============================================================
+       5. Calendário interativo
+    ============================================================ */
+    const MONTHS_PT = [
+      'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
+    ];
+    const AVAILABLE_TIMES    = ['09:00','10:00','11:00','14:00','15:00','16:00'];
+    const AVAILABLE_WEEKDAYS = [1,2,3,4,5];
+
+    const now = new Date();
+    let viewYear  = now.getFullYear();
+    let viewMonth = now.getMonth();
+    let selectedDay  = null;
+    let selectedTime = null;
+
+    function renderCalendar() {
+      document.getElementById('calendarTitle').textContent =
+        MONTHS_PT[viewMonth] + ' ' + viewYear;
+
+      const grid  = document.getElementById('calendarDays');
+      grid.innerHTML = '';
+
+      const today    = new Date(); today.setHours(0,0,0,0);
+      const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+      const lastDay  = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-day empty';
+        grid.appendChild(empty);
+      }
+
+      for (let d = 1; d <= lastDay; d++) {
+        const date    = new Date(viewYear, viewMonth, d);
+        date.setHours(0,0,0,0);
+        const weekday = date.getDay();
+        const isPast  = date < today;
+        const isAvail = !isPast && AVAILABLE_WEEKDAYS.includes(weekday);
+        const isToday = date.getTime() === today.getTime();
+        const isSel   = selectedDay &&
+          selectedDay.getFullYear() === viewYear &&
+          selectedDay.getMonth()    === viewMonth &&
+          selectedDay.getDate()     === d;
+
+        const cell = document.createElement('div');
+        cell.textContent = d;
+        cell.setAttribute('role', 'gridcell');
+
+        if (isPast) {
+          cell.className = 'calendar-day past';
+          cell.setAttribute('aria-disabled', 'true');
+        } else if (isSel) {
+          cell.className = 'calendar-day available selected';
+          cell.setAttribute('aria-selected', 'true');
+          cell.setAttribute('aria-label', d + ' de ' + MONTHS_PT[viewMonth] + ' — selecionado');
+        } else if (isAvail) {
+          cell.className = 'calendar-day available' + (isToday ? ' today' : '');
+          cell.setAttribute('tabindex', '0');
+          cell.setAttribute('aria-label', d + ' de ' + MONTHS_PT[viewMonth]);
+          cell.addEventListener('click', () => selectDay(date));
+          cell.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectDay(date); }
+          });
+        } else {
+          cell.className = 'calendar-day past';
+          cell.setAttribute('aria-disabled', 'true');
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    function selectDay(date) {
+      selectedDay  = date;
+      selectedTime = null;
+      updateSessionField();
+      renderCalendar();
+      renderTimeslots();
+    }
+
+    function renderTimeslots() {
+      const section = document.getElementById('timeslotsSection');
+      const grid    = document.getElementById('timeslotsGrid');
+      section.style.display = 'block';
+      grid.innerHTML = '';
+
+      AVAILABLE_TIMES.forEach(time => {
+        const btn = document.createElement('button');
+        btn.type      = 'button';
+        btn.className = 'timeslot' + (selectedTime === time ? ' selected' : '');
+        btn.textContent = time;
+        btn.setAttribute('aria-label', 'Horário ' + time);
+        btn.addEventListener('click', () => {
+          selectedTime = time;
+          updateSessionField();
+          renderTimeslots();
+        });
+        grid.appendChild(btn);
+      });
+    }
+
+    function updateSessionField() {
+      const field = document.getElementById('sessao');
+      if (selectedDay && selectedTime) {
+        const d = String(selectedDay.getDate()).padStart(2,'0');
+        const m = String(selectedDay.getMonth()+1).padStart(2,'0');
+        field.value = d + '/' + m + '/' + selectedDay.getFullYear() + ' às ' + selectedTime;
+      } else {
+        field.value = '';
+      }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', () => {
+      if (--viewMonth < 0) { viewMonth = 11; viewYear--; }
+      renderCalendar();
+    });
+    document.getElementById('nextMonth').addEventListener('click', () => {
+      if (++viewMonth > 11) { viewMonth = 0; viewYear++; }
+      renderCalendar();
+    });
+
+    renderCalendar();
+
+    /* ============================================================
+       6. Toggle de pagamento
+    ============================================================ */
+    const payPix  = document.getElementById('payPix');
+    const payCard = document.getElementById('payCard');
+
+    function setPayment(active, inactive) {
+      active.classList.add('active');     active.setAttribute('aria-pressed','true');
+      inactive.classList.remove('active'); inactive.setAttribute('aria-pressed','false');
+    }
+    payPix.addEventListener('click',  () => setPayment(payPix,  payCard));
+    payCard.addEventListener('click', () => setPayment(payCard, payPix));
+
+    /* ============================================================
+       7. Formulário — validação e submit
+    ============================================================ */
+    const form        = document.getElementById('formAgendamento');
+    const formSuccess = document.getElementById('formSuccess');
+
+    function setError(fieldId, errId, hasError) {
+      document.getElementById(fieldId).classList.toggle('error', hasError);
+      document.getElementById(errId).classList.toggle('visible', hasError);
+    }
+
+    function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    function isPhone(v) { return v.replace(/\D/g,'').length >= 10; }
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const nome     = document.getElementById('nome').value.trim();
+      const email    = document.getElementById('email').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const sessao   = document.getElementById('sessao').value.trim();
+
+      setError('nome',    'nome-error',    !nome);
+      setError('email',   'email-error',   !isEmail(email));
+      setError('whatsapp','whatsapp-error',!isPhone(whatsapp));
+
+      if (!sessao) {
+        document.querySelector('.calendar').scrollIntoView({ behavior:'smooth', block:'center' });
+        return;
+      }
+
+      if (!nome || !isEmail(email) || !isPhone(whatsapp)) return;
+
+      /*
+        TODO: Integrar com backend / API de agendamento.
+        Payload: { nome, email, whatsapp, sessao,
+                   pagamento: payPix.classList.contains('active') ? 'pix' : 'cartao' }
+      */
+      form.style.display = 'none';
+      formSuccess.classList.add('visible');
+    });
+
+    document.getElementById('whatsapp').addEventListener('input', function () {
+      let v = this.value.replace(/\D/g,'').substring(0,11);
+      if      (v.length > 6) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+      else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+      else if (v.length > 0) v = '(' + v;
+      this.value = v;
+    });
+
+    ['nome','email','whatsapp'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        document.getElementById(id).classList.remove('error');
+        document.getElementById(id + '-error').classList.remove('visible');
+      });
+    });
+  </script>
+
+</body>
+</html>
