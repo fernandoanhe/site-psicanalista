@@ -60,7 +60,6 @@ async function main() {
       {
         email: email.toLowerCase().trim(),
         password_hash,
-        updated_at: new Date().toISOString(),
       },
       { onConflict: 'email' }
     )
