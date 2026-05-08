@@ -1021,12 +1021,6 @@
       color: #c0392b;
       margin-bottom: 16px;
     }
-    .pix-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
     .pix-back-btn {
       background: none;
       border: 1px solid #aaa;
@@ -1038,18 +1032,6 @@
     }
     .pix-back-btn:hover {
       background: #f5f5f5;
-    }
-    .pix-card-btn {
-      background: var(--color-primary, #2c6e6a);
-      border: none;
-      border-radius: 8px;
-      padding: 8px 20px;
-      font-size: 0.9rem;
-      color: #fff;
-      cursor: pointer;
-    }
-    .pix-card-btn:hover {
-      opacity: 0.9;
     }
 
     .form-caption {
@@ -1420,12 +1402,7 @@
                 </button>
               </div>
               <p class="pix-expires" id="pixExpires"></p>
-              <div class="pix-actions">
-                <button class="pix-back-btn" id="pixBackBtn" type="button">&#8592; Voltar ao formulário</button>
-                <button class="pix-card-btn" id="pixCardBtn" type="button">
-                  <i class="fa-solid fa-credit-card" aria-hidden="true"></i> Cancelar e pagar com cartão
-                </button>
-              </div>
+              <button class="pix-back-btn" id="pixBackBtn" type="button">&#8592; Voltar</button>
             </div>
 
             <p class="form-submit-error" id="formSubmitError"></p>
@@ -1915,10 +1892,6 @@
       resetPixBox();
     });
 
-    document.getElementById('pixCardBtn').addEventListener('click', () => {
-      resetPixBox();
-      setPayment(payCard, payPix);
-    });
 
     document.getElementById('whatsapp').addEventListener('input', function () {
       let v = this.value.replace(/\D/g,'').substring(0,11);
