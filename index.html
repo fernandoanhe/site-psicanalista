@@ -1687,7 +1687,7 @@
     function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
     function isPhone(v) { return v.replace(/\D/g,'').length >= 10; }
 
-    form.addEventListener('submit', e => {
+    form.addEventListener('submit', async e => {
       e.preventDefault();
 
       const nome     = document.getElementById('nome').value.trim();
