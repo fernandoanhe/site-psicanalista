@@ -16,6 +16,16 @@ const MONTHS_PT = [
   'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro',
 ];
 
+// Escape user-supplied values before interpolating them into HTML
+function esc(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function formatDatePT(dateStr) {
   // dateStr: 'YYYY-MM-DD'
   const [year, month, day] = dateStr.split('-').map(Number);
@@ -93,7 +103,7 @@ async function sendConfirmationToPatient(booking) {
     'Confirmação de sessão',
     `
     <h2>Sua sessão foi confirmada!</h2>
-    <p>Olá, <strong>${booking.patient_name}</strong>!</p>
+    <p>Olá, <strong>${esc(booking.patient_name)}</strong>!</p>
     <p>Seu agendamento foi realizado com sucesso. Abaixo estão os detalhes:</p>
 
     <table class="detail-table">
@@ -147,9 +157,9 @@ async function sendNotificationToAdmin(booking) {
     <p>Uma nova sessão foi agendada e o pagamento foi confirmado.</p>
 
     <table class="detail-table">
-      <tr><td>Paciente</td><td>${booking.patient_name}</td></tr>
-      <tr><td>E-mail</td><td>${booking.patient_email}</td></tr>
-      <tr><td>Telefone</td><td>${booking.patient_phone || '—'}</td></tr>
+      <tr><td>Paciente</td><td>${esc(booking.patient_name)}</td></tr>
+      <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
+      <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
       <tr><td>Data</td><td>${formattedDate}</td></tr>
       <tr><td>Horário</td><td>${booking.session_time}</td></tr>
       <tr><td>Valor</td><td>R$ ${Number(booking.payment_amount).toFixed(2).replace('.', ',')}</td></tr>
@@ -188,7 +198,7 @@ async function sendReminderToPatient(booking) {
     'Lembrete de sessão',
     `
     <h2>Sua sessão começa em 30 minutos!</h2>
-    <p>Olá, <strong>${booking.patient_name}</strong>!</p>
+    <p>Olá, <strong>${esc(booking.patient_name)}</strong>!</p>
     <p>Este é um lembrete de que sua sessão está prestes a começar.</p>
 
     <table class="detail-table">
@@ -237,9 +247,9 @@ async function sendReminderToAdmin(booking) {
     <p>Você tem uma sessão agendada para daqui a 30 minutos.</p>
 
     <table class="detail-table">
-      <tr><td>Paciente</td><td>${booking.patient_name}</td></tr>
-      <tr><td>E-mail</td><td>${booking.patient_email}</td></tr>
-      <tr><td>Telefone</td><td>${booking.patient_phone || '—'}</td></tr>
+      <tr><td>Paciente</td><td>${esc(booking.patient_name)}</td></tr>
+      <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
+      <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
       <tr><td>Data</td><td>${formattedDate}</td></tr>
       <tr><td>Horário</td><td>${booking.session_time}</td></tr>
     </table>
@@ -260,7 +270,46 @@ async function sendReminderToAdmin(booking) {
   return { success: true };
 }
 
+/**
+ * Alert the admin that a payment arrived for a slot that is already taken
+ * (e.g. PIX paid after the hold expired). The payment must be refunded or
+ * the session rescheduled manually.
+ * @param {Object} booking - booking record from database
+ * @param {string} paymentId - Mercado Pago payment ID
+ */
+async function sendSlotConflictToAdmin(booking, paymentId) {
+  const formattedDate = formatDatePT(String(booking.session_date).slice(0, 10));
+
+  const html = baseEmail(
+    'Pagamento em horário já ocupado',
+    `
+    <h2>Atenção: pagamento em horário já ocupado</h2>
+    <p>Um pagamento foi aprovado para um horário que já tinha outra sessão paga.
+    Entre em contato com o paciente para remarcar ou estorne o pagamento no Mercado Pago.</p>
+
+    <table class="detail-table">
+      <tr><td>Paciente</td><td>${esc(booking.patient_name)}</td></tr>
+      <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
+      <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
+      <tr><td>Data</td><td>${formattedDate}</td></tr>
+      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>ID do pagamento</td><td>${esc(paymentId)}</td></tr>
+    </table>
+    `
+  );
+
+  await resend.emails.send({
+    from: process.env.EMAIL_FROM,
+    to: process.env.EMAIL_ADMIN,
+    subject: `[AÇÃO NECESSÁRIA] Pagamento em horário ocupado — ${booking.patient_name}`,
+    html,
+  });
+
+  return { success: true };
+}
+
 module.exports = {
+  sendSlotConflictToAdmin,
   sendConfirmationToPatient,
   sendNotificationToAdmin,
   sendReminderToPatient,

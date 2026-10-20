@@ -7,11 +7,14 @@ function authHeaders() {
 }
 
 const SECTION_LABELS = {
-  hero:   'Hero',
-  sobre:  'Sobre Mim',
-  cta:    'Agendamento / CTA',
-  rodape: 'Rodapé',
-  config: 'Configurações',
+  hero:           'Hero',
+  sobre:          'Sobre Mim',
+  especialidades: 'Especialidades',
+  online:         'Terapia Online',
+  cta:            'Agendamento / CTA',
+  rodape:         'Rodapé',
+  nav:            'Navegação',
+  config:         'Configurações',
 };
 
 const styles = {
@@ -256,7 +259,7 @@ export default function Content() {
     return acc;
   }, {});
 
-  const sectionOrder = ['hero', 'sobre', 'cta', 'rodape', 'config'];
+  const sectionOrder = ['hero', 'sobre', 'especialidades', 'online', 'cta', 'rodape', 'nav', 'config'];
 
   return (
     <div style={styles.page}>

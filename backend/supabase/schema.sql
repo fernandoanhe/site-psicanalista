@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS availability (
   -- duration in minutes
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE (day_of_week)
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+  -- several periods per day are allowed (e.g. morning and afternoon)
 );
 
 -- =============================================================
@@ -85,6 +85,9 @@ CREATE TABLE IF NOT EXISTS bookings (
 CREATE INDEX IF NOT EXISTS idx_bookings_session_date ON bookings (session_date);
 CREATE INDEX IF NOT EXISTS idx_bookings_payment_status ON bookings (payment_status);
 CREATE INDEX IF NOT EXISTS idx_bookings_reminder ON bookings (reminder_sent, payment_status, session_date);
+CREATE INDEX IF NOT EXISTS idx_bookings_slot_status ON bookings (session_date, session_time, payment_status, created_at);
+-- Only one paid session per slot
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_bookings_paid_slot ON bookings (session_date, session_time) WHERE payment_status = 'paid';
 
 -- =============================================================
 -- TABLE: admin_user

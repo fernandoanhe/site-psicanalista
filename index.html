@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fernando Anhê — Psicanalista Online | Atendimento Individual</title>
   <meta name="description" content="Psicanalista online com 5 anos de experiência. Membro da Sociedade Psicanalítica Sigmund Freud de São Paulo. Atendimento individual para adultos. Agende sua sessão.">
-  <meta name="keywords" content="psicanalista online, psicanálise online, terapia online, ansiedade, depressão, autoconhecimento, atendimento psicológico online">
+  <meta name="keywords" content="psicanalista online, psicanálise online, terapia online, ansiedade, depressão, autoconhecimento">
   <meta name="robots" content="noindex, nofollow">
   <meta name="author" content="Fernando Anhê">
 
@@ -13,8 +13,7 @@
   <meta property="og:title" content="Fernando Anhê — Psicanalista Online">
   <meta property="og:description" content="Você pode entender suas questões emocionais, viver relacionamentos saudáveis com tranquilidade. Agende sua sessão online.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://[DOMINIO].com.br">
-  <meta property="og:image" content="https://[DOMINIO].com.br/og-image.jpg">
+  <meta property="og:url" content="https://fernandopsicanalista.com.br">
   <meta property="og:locale" content="pt_BR">
 
   <!-- Twitter Card -->
@@ -30,22 +29,16 @@
     "name": "Fernando Anhê",
     "jobTitle": "Psicanalista",
     "description": "Psicanalista online com 5 anos de experiência. Membro da Sociedade Psicanalítica Sigmund Freud de São Paulo.",
-    "url": "https://[DOMINIO].com.br",
-    "telephone": "[TELEFONE]",
-    "email": "[EMAIL]",
+    "url": "https://fernandopsicanalista.com.br",
     "knowsAbout": ["Psicanálise", "Ansiedade", "Depressão", "Autoconhecimento", "Relacionamentos"],
-    "hasCredential": {
-      "@type": "EducationalOccupationalCredential",
-      "credentialCategory": "CRP",
-      "recognizedBy": {
-        "@type": "Organization",
-        "name": "Conselho Federal de Psicologia"
-      }
+    "memberOf": {
+      "@type": "Organization",
+      "name": "Sociedade Psicanalítica Sigmund Freud de São Paulo"
     }
   }
   </script>
 
-  <link rel="canonical" href="https://[DOMINIO].com.br">
+  <link rel="canonical" href="https://fernandopsicanalista.com.br">
   <!-- robots.txt e sitemap.xml devem ser criados na raiz do servidor -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1041,6 +1034,55 @@
       margin-top: -6px;
     }
 
+    .form-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--color-text-muted);
+      cursor: pointer;
+    }
+    .form-consent input {
+      margin-top: 2px;
+      accent-color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .form-consent a {
+      color: var(--color-primary);
+      text-decoration: underline;
+    }
+
+    .form-submit-error {
+      display: none;
+      font-size: 13px;
+      color: var(--color-error);
+      text-align: center;
+      margin-top: 12px;
+    }
+    .form-submit-error.visible { display: block; }
+
+    .calendar-status {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      text-align: center;
+      margin-top: 14px;
+      min-height: 18px;
+    }
+    .calendar-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      border-color: var(--color-border);
+      color: var(--color-text-muted);
+    }
+
+    .agendamento-header .session-price {
+      margin-top: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
     .form-success {
       display: none;
       background: #f0faf0;
@@ -1191,7 +1233,6 @@
           <li><a href="#sobre">Sobre Mim</a></li>
           <li><a href="#especialidades">Especialidades</a></li>
           <li><a href="#online">Terapia Online</a></li>
-          <li><a href="#depoimentos">Depoimentos</a></li>
         </ul>
 
         <span class="nav-badge">Apenas particular. Não trabalhamos com convênio.</span>
@@ -1209,7 +1250,6 @@
         <a href="#sobre"          class="mobile-link">Sobre Mim</a>
         <a href="#especialidades" class="mobile-link">Especialidades</a>
         <a href="#online"         class="mobile-link">Terapia Online</a>
-        <a href="#depoimentos"    class="mobile-link">Depoimentos</a>
         <a href="#agendar"        class="mobile-link">Agendar Sessão</a>
       </div>
     </nav>
@@ -1290,6 +1330,7 @@
             <i class="fa-solid fa-lock" aria-hidden="true"></i> Pagamento seguro &nbsp;·&nbsp;
             <i class="fa-solid fa-envelope" aria-hidden="true"></i> Confirmação por e-mail e WhatsApp
           </p>
+          <p class="session-price" id="sessionPrice" hidden></p>
         </div>
 
         <div class="agendamento-grid">
@@ -1318,6 +1359,7 @@
               </div>
 
               <div class="calendar-days" id="calendarDays" role="grid"></div>
+              <p class="calendar-status" id="calendarStatus" aria-live="polite"></p>
             </div>
 
             <div class="timeslots" id="timeslotsSection" style="display:none;">
@@ -1371,7 +1413,15 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn-primary" style="width:100%;">
+              <div class="form-group">
+                <label class="form-consent" for="consent">
+                  <input type="checkbox" id="consent" name="consent">
+                  <span>Li e concordo com a <a href="/politica-de-privacidade.html" target="_blank" rel="noopener">Política de Privacidade</a> e autorizo o uso dos meus dados para o agendamento.</span>
+                </label>
+                <span class="form-error-msg" id="consent-error">É preciso aceitar a Política de Privacidade.</span>
+              </div>
+
+              <button type="submit" class="btn-primary" id="submitBtn" style="width:100%;">
                 <i class="fa-solid fa-check" aria-hidden="true" style="margin-right:8px;"></i>
                 Confirmar agendamento
               </button>
@@ -1387,7 +1437,7 @@
               <div class="success-icon">
                 <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
               </div>
-              <p>Agendamento confirmado! Você receberá a confirmação por e-mail.</p>
+              <p id="formSuccessText">Agendamento confirmado! Você receberá a confirmação por e-mail.</p>
             </div>
 
             <div class="pix-box" id="pixBox" role="alert">
@@ -1508,7 +1558,7 @@
           <div class="card-dark">
             <div class="card-dark-icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></div>
             <h4>Sigilo e ética</h4>
-            <p>O atendimento online é regulamentado pelo Conselho Federal de Psicologia e segue todas as normas de sigilo profissional.</p>
+            <p>O atendimento segue os princípios éticos da psicanálise e o sigilo profissional, em plataforma de vídeo segura.</p>
           </div>
         </div>
 
@@ -1538,11 +1588,11 @@
         <span class="footer-role">Psicanalista</span>
       </div>
 
-      <div class="footer-crp">CRP XX / XXXXX</div>
+      <div class="footer-crp">Membro da Sociedade Psicanalítica Sigmund Freud de São Paulo</div>
 
       <div class="footer-links">
         <ul class="footer-links-list">
-          <li><a href="#">Política de privacidade</a></li>
+          <li><a href="/politica-de-privacidade.html">Política de privacidade</a></li>
           <li><a href="#agendar">Contato</a></li>
         </ul>
         <p class="footer-copy">© 2026 — Todos os direitos reservados</p>
@@ -1630,20 +1680,81 @@
     document.querySelectorAll('.section-animate').forEach(el => animObserver.observe(el));
 
     /* ============================================================
-       5. Calendário interativo
+       5. Calendário interativo (horários vindos do backend)
     ============================================================ */
+    const API_BASE = 'https://backend-psicanalista.vercel.app';
+
     const MONTHS_PT = [
       'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
       'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'
     ];
-    const AVAILABLE_TIMES    = ['09:00','10:00','11:00','14:00','15:00','16:00'];
-    const AVAILABLE_WEEKDAYS = [1,2,3,4,5];
 
     const now = new Date();
     let viewYear  = now.getFullYear();
     let viewMonth = now.getMonth();
     let selectedDay  = null;
     let selectedTime = null;
+
+    // 'YYYY-MM' -> Map('YYYY-MM-DD' -> ['HH:MM', ...])
+    const availabilityCache = {};
+    let monthRequest = null;
+
+    const calendarStatus = document.getElementById('calendarStatus');
+    const prevMonthBtn   = document.getElementById('prevMonth');
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function monthKey(y, m) { return y + '-' + pad(m + 1); }
+    function dateKey(date) {
+      return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
+    }
+
+    async function loadMonth(y, m) {
+      const res = await fetch(API_BASE + '/api/public/availability?year=' + y + '&month=' + (m + 1));
+      if (!res.ok) throw new Error('Erro ao buscar horários');
+      const data = await res.json();
+      availabilityCache[monthKey(y, m)] = new Map(data.map(d => [d.date, d.slots]));
+    }
+
+    function slotsFor(date) {
+      const month = availabilityCache[monthKey(date.getFullYear(), date.getMonth())];
+      return (month && month.get(dateKey(date))) || [];
+    }
+
+    async function showMonth(force) {
+      prevMonthBtn.disabled = viewYear === now.getFullYear() && viewMonth === now.getMonth();
+      renderCalendar();
+
+      if (availabilityCache[monthKey(viewYear, viewMonth)] && !force) {
+        updateCalendarStatus();
+        return;
+      }
+
+      calendarStatus.textContent = 'Carregando horários…';
+      const request = loadMonth(viewYear, viewMonth);
+      monthRequest = request;
+      try {
+        await request;
+        if (monthRequest !== request) return; // usuário já mudou de mês
+        renderTimeslots();
+        renderCalendar();
+        updateCalendarStatus();
+      } catch {
+        if (monthRequest !== request) return;
+        calendarStatus.innerHTML = 'Não foi possível carregar os horários. ' +
+          '<a href="#" id="calendarRetry" style="color:var(--color-primary);text-decoration:underline;">Tentar novamente</a>';
+        document.getElementById('calendarRetry').addEventListener('click', e => {
+          e.preventDefault();
+          showMonth(true);
+        });
+      }
+    }
+
+    function updateCalendarStatus() {
+      const month = availabilityCache[monthKey(viewYear, viewMonth)];
+      calendarStatus.textContent = month && month.size === 0
+        ? 'Nenhum horário disponível neste mês. Veja o próximo mês.'
+        : '';
+    }
 
     function renderCalendar() {
       document.getElementById('calendarTitle').textContent =
@@ -1665,23 +1776,16 @@
       for (let d = 1; d <= lastDay; d++) {
         const date    = new Date(viewYear, viewMonth, d);
         date.setHours(0,0,0,0);
-        const weekday = date.getDay();
         const isPast  = date < today;
-        const isAvail = !isPast && AVAILABLE_WEEKDAYS.includes(weekday);
+        const isAvail = !isPast && slotsFor(date).length > 0;
         const isToday = date.getTime() === today.getTime();
-        const isSel   = selectedDay &&
-          selectedDay.getFullYear() === viewYear &&
-          selectedDay.getMonth()    === viewMonth &&
-          selectedDay.getDate()     === d;
+        const isSel   = selectedDay && selectedDay.getTime() === date.getTime();
 
         const cell = document.createElement('div');
         cell.textContent = d;
         cell.setAttribute('role', 'gridcell');
 
-        if (isPast) {
-          cell.className = 'calendar-day past';
-          cell.setAttribute('aria-disabled', 'true');
-        } else if (isSel) {
+        if (isAvail && isSel) {
           cell.className = 'calendar-day available selected';
           cell.setAttribute('aria-selected', 'true');
           cell.setAttribute('aria-label', d + ' de ' + MONTHS_PT[viewMonth] + ' — selecionado');
@@ -1712,10 +1816,17 @@
     function renderTimeslots() {
       const section = document.getElementById('timeslotsSection');
       const grid    = document.getElementById('timeslotsGrid');
-      section.style.display = 'block';
+      const slots   = selectedDay ? slotsFor(selectedDay) : [];
+
+      // O dia/horário escolhido pode ter sido ocupado após recarregar
+      if (selectedDay && slots.length === 0) selectedDay = null;
+      if (selectedTime && !slots.includes(selectedTime)) selectedTime = null;
+      updateSessionField();
+
+      section.style.display = slots.length ? 'block' : 'none';
       grid.innerHTML = '';
 
-      AVAILABLE_TIMES.forEach(time => {
+      slots.forEach(time => {
         const btn = document.createElement('button');
         btn.type      = 'button';
         btn.className = 'timeslot' + (selectedTime === time ? ' selected' : '');
@@ -1733,27 +1844,43 @@
     function updateSessionField() {
       const field = document.getElementById('sessao');
       if (selectedDay && selectedTime) {
-        const d = String(selectedDay.getDate()).padStart(2,'0');
-        const m = String(selectedDay.getMonth()+1).padStart(2,'0');
+        const d = pad(selectedDay.getDate());
+        const m = pad(selectedDay.getMonth() + 1);
         field.value = d + '/' + m + '/' + selectedDay.getFullYear() + ' às ' + selectedTime;
       } else {
         field.value = '';
       }
     }
 
-    document.getElementById('prevMonth').addEventListener('click', () => {
+    prevMonthBtn.addEventListener('click', () => {
+      if (prevMonthBtn.disabled) return;
       if (--viewMonth < 0) { viewMonth = 11; viewYear--; }
-      renderCalendar();
+      showMonth();
     });
     document.getElementById('nextMonth').addEventListener('click', () => {
       if (++viewMonth > 11) { viewMonth = 0; viewYear++; }
-      renderCalendar();
+      showMonth();
     });
 
-    renderCalendar();
+    showMonth();
 
     /* ============================================================
-       6. Toggle de pagamento
+       6. Valor da sessão (conteúdo editável no painel)
+    ============================================================ */
+    fetch(API_BASE + '/api/public/content')
+      .then(res => res.ok ? res.json() : null)
+      .then(content => {
+        const price = content && parseFloat(content.session_price);
+        if (!price) return;
+        const el = document.getElementById('sessionPrice');
+        el.textContent = 'Valor da sessão: ' +
+          price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        el.hidden = false;
+      })
+      .catch(() => {});
+
+    /* ============================================================
+       7. Toggle de pagamento
     ============================================================ */
     const payPix  = document.getElementById('payPix');
     const payCard = document.getElementById('payCard');
@@ -1766,14 +1893,23 @@
     payCard.addEventListener('click', () => setPayment(payCard, payPix));
 
     /* ============================================================
-       7. Formulário — validação e submit
+       8. Formulário — validação e submit
     ============================================================ */
     const form        = document.getElementById('formAgendamento');
     const formSuccess = document.getElementById('formSuccess');
+    const submitBtn   = document.getElementById('submitBtn');
+    const errorEl     = document.getElementById('formSubmitError');
+    const SUBMIT_LABEL =
+      '<i class="fa-solid fa-check" aria-hidden="true" style="margin-right:8px;"></i>Confirmar agendamento';
 
     function setError(fieldId, errId, hasError) {
       document.getElementById(fieldId).classList.toggle('error', hasError);
       document.getElementById(errId).classList.toggle('visible', hasError);
+    }
+
+    function resetSubmitBtn() {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = SUBMIT_LABEL;
     }
 
     function isEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
@@ -1786,44 +1922,48 @@
       const email    = document.getElementById('email').value.trim();
       const whatsapp = document.getElementById('whatsapp').value.trim();
       const sessao   = document.getElementById('sessao').value.trim();
+      const consent  = document.getElementById('consent').checked;
 
       setError('nome',    'nome-error',    !nome);
       setError('email',   'email-error',   !isEmail(email));
       setError('whatsapp','whatsapp-error',!isPhone(whatsapp));
+      document.getElementById('consent-error').classList.toggle('visible', !consent);
 
       if (!sessao) {
         document.querySelector('.calendar').scrollIntoView({ behavior:'smooth', block:'center' });
         return;
       }
 
-      if (!nome || !isEmail(email) || !isPhone(whatsapp)) return;
+      if (!nome || !isEmail(email) || !isPhone(whatsapp) || !consent) return;
 
-      const submitBtn = e.submitter || form.querySelector('[type="submit"]');
-      const errorEl  = document.getElementById('formSubmitError');
       errorEl.classList.remove('visible');
       submitBtn.disabled = true;
       submitBtn.innerHTML = 'Aguarde...';
 
-      const session_date = selectedDay.getFullYear() + '-' +
-        String(selectedDay.getMonth() + 1).padStart(2, '0') + '-' +
-        String(selectedDay.getDate()).padStart(2, '0');
       const payment_method = payPix.classList.contains('active') ? 'pix' : 'credit_card';
 
       try {
-        const res = await fetch('https://backend-psicanalista.vercel.app/api/public/book', {
+        const res = await fetch(API_BASE + '/api/public/book', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             patient_name:   nome,
             patient_email:  email,
             patient_phone:  whatsapp,
-            session_date,
+            session_date:   dateKey(selectedDay),
             session_time:   selectedTime,
             payment_method,
           }),
         });
 
-        const data = await res.json();
+        const data = await res.json().catch(() => ({}));
+
+        if (res.status === 409) {
+          // Horário ocupado nesse meio tempo: recarrega o mês
+          await showMonth(true);
+          throw new Error((data.error || 'Este horário não está mais disponível') +
+            '. Escolha outro horário no calendário.');
+        }
         if (!res.ok) throw new Error(data.error || 'Erro ao processar agendamento.');
 
         if (data.checkout_url) {
@@ -1854,11 +1994,11 @@
         }
 
       } catch (err) {
-        errorEl.textContent = err.message;
+        errorEl.textContent = err instanceof TypeError
+          ? 'Não foi possível conectar. Verifique sua internet e tente novamente.'
+          : err.message;
         errorEl.classList.add('visible');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML =
-          '<i class="fa-solid fa-check" aria-hidden="true" style="margin-right:8px;"></i>Confirmar agendamento';
+        resetSubmitBtn();
       }
     });
 
@@ -1883,14 +2023,40 @@
       document.getElementById('pixCodeText').value = '';
       document.getElementById('pixExpires').textContent = '';
       form.style.display = '';
-      submitBtn.disabled = false;
-      submitBtn.innerHTML =
-        '<i class="fa-solid fa-check" aria-hidden="true" style="margin-right:8px;"></i>Confirmar agendamento';
+      resetSubmitBtn();
     }
 
     document.getElementById('pixBackBtn').addEventListener('click', () => {
       resetPixBox();
     });
+
+    /* ============================================================
+       9. Retorno do checkout de cartão (?pagamento=...)
+    ============================================================ */
+    (function handlePaymentReturn() {
+      const params = new URLSearchParams(window.location.search);
+      const status = params.get('pagamento');
+      if (!status) return;
+
+      if (status === 'aprovado') {
+        form.style.display = 'none';
+        document.getElementById('formSuccessText').textContent =
+          'Pagamento aprovado! Sua sessão está confirmada e você receberá os detalhes por e-mail.';
+        formSuccess.classList.add('visible');
+      } else if (status === 'pendente') {
+        errorEl.textContent =
+          'Seu pagamento está em análise. Assim que for aprovado, você receberá a confirmação por e-mail.';
+        errorEl.classList.add('visible');
+      } else if (status === 'falhou') {
+        errorEl.textContent =
+          'O pagamento não foi concluído. Escolha o horário novamente para tentar outra vez.';
+        errorEl.classList.add('visible');
+      }
+
+      // Limpa a URL para não repetir a mensagem ao recarregar
+      history.replaceState(null, '', window.location.pathname + '#agendar');
+      document.getElementById('agendar').scrollIntoView();
+    })();
 
 
     document.getElementById('whatsapp').addEventListener('input', function () {
@@ -1906,6 +2072,10 @@
         document.getElementById(id).classList.remove('error');
         document.getElementById(id + '-error').classList.remove('visible');
       });
+    });
+
+    document.getElementById('consent').addEventListener('change', () => {
+      document.getElementById('consent-error').classList.remove('visible');
     });
   </script>
 

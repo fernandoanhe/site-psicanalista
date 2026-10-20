@@ -117,115 +117,204 @@ const styles = {
 };
 
 // ===================== TAB 1: Disponibilidade =====================
-function AvailabilityTab({ availability, onReload }) {
-  // Build map dayOfWeek → record
-  const availMap = {};
-  for (const a of availability) availMap[a.day_of_week] = a;
+const stylesAv = {
+  dayCard: {
+    backgroundColor: '#FFFFFF',
+    border: '1px solid #E8D5C0',
+    borderRadius: '8px',
+    marginBottom: '16px',
+    overflow: 'hidden',
+  },
+  dayHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '12px 20px',
+    backgroundColor: '#F7EDE0',
+    borderBottom: '1px solid #E8D5C0',
+  },
+  dayName: { fontSize: '15px', color: '#2C1A0E' },
+  periodRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '12px 20px',
+    borderBottom: '1px solid #F7EDE0',
+    flexWrap: 'wrap',
+  },
+  newRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: '12px 20px',
+    backgroundColor: '#FEFBF8',
+    flexWrap: 'wrap',
+  },
+  timeLabel: { fontSize: '12px', color: '#8B6B4A', marginRight: '4px' },
+  emptyMsg: { padding: '14px 20px', fontSize: '13px', color: '#8B6B4A' },
+  removeBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#C0392B',
+    cursor: 'pointer',
+    fontSize: '18px',
+    lineHeight: 1,
+    padding: '0 4px',
+  },
+};
 
-  // Local edits
-  const [rows, setRows] = useState(() =>
-    DAY_NAMES.map((_, i) => ({
-      day_of_week: i,
-      start_time: availMap[i]?.start_time?.slice(0, 5) || '09:00',
-      end_time: availMap[i]?.end_time?.slice(0, 5) || '18:00',
-      slot_duration: availMap[i]?.slot_duration || 60,
-      is_active: availMap[i]?.is_active ?? false,
-    }))
-  );
-  const [msgs, setMsgs] = useState({});
+function DayRow({ dow, periods, onReload }) {
+  const [newPeriod, setNewPeriod] = useState(null);
+  const [msg, setMsg] = useState(null);
 
-  function updateRow(i, field, val) {
-    setRows((prev) => prev.map((r, idx) => (idx === i ? { ...r, [field]: val } : r)));
+  function showMsg(type, text) {
+    setMsg({ type, text });
+    setTimeout(() => setMsg(null), 2500);
   }
 
-  async function saveRow(i) {
-    const row = rows[i];
-    try {
-      const res = await fetch(`${BACKEND}/api/admin/schedule/availability`, {
-        method: 'POST',
-        headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(row),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Erro');
-      setMsgs((prev) => ({ ...prev, [i]: { type: 'success', msg: 'Salvo!' } }));
-      onReload();
-    } catch (err) {
-      setMsgs((prev) => ({ ...prev, [i]: { type: 'error', msg: err.message } }));
+  async function handleToggle(period) {
+    await fetch(`${BACKEND}/api/admin/schedule/availability/${period.id}`, {
+      method: 'PUT',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_active: !period.is_active }),
+    });
+    onReload();
+  }
+
+  async function handleDelete(id) {
+    if (!window.confirm('Remover este período?')) return;
+    const res = await fetch(`${BACKEND}/api/admin/schedule/availability/${id}`, {
+      method: 'DELETE',
+      headers: authHeaders(),
+    });
+    if (res.ok) onReload();
+    else showMsg('error', 'Erro ao remover.');
+  }
+
+  async function handleSaveNew() {
+    if (!newPeriod.start_time || !newPeriod.end_time) {
+      showMsg('error', 'Preencha início e fim.');
+      return;
     }
-    setTimeout(() => setMsgs((prev) => { const n = { ...prev }; delete n[i]; return n; }), 2500);
+    const res = await fetch(`${BACKEND}/api/admin/schedule/availability`, {
+      method: 'POST',
+      headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+      body: JSON.stringify({ day_of_week: dow, ...newPeriod }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setNewPeriod(null);
+      onReload();
+      showMsg('success', 'Período adicionado!');
+    } else {
+      showMsg('error', data.error || 'Erro');
+    }
   }
 
   return (
-    <div style={styles.card}>
-      <table style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.th}>Dia</th>
-            <th style={styles.th}>Ativo</th>
-            <th style={styles.th}>Início</th>
-            <th style={styles.th}>Fim</th>
-            <th style={styles.th}>Duração (min)</th>
-            <th style={styles.th}></th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i}>
-              <td style={styles.td}>{DAY_NAMES[i]}</td>
-              <td style={styles.td}>
-                <span
-                  style={styles.toggle}
-                  title={row.is_active ? 'Clique para desativar' : 'Clique para ativar'}
-                  onClick={() => updateRow(i, 'is_active', !row.is_active)}
-                >
-                  {row.is_active ? '🟢' : '⚫'}
-                </span>
-              </td>
-              <td style={styles.td}>
-                <input
-                  type="time"
-                  value={row.start_time}
-                  onChange={(e) => updateRow(i, 'start_time', e.target.value)}
-                  style={styles.input}
-                  disabled={!row.is_active}
-                />
-              </td>
-              <td style={styles.td}>
-                <input
-                  type="time"
-                  value={row.end_time}
-                  onChange={(e) => updateRow(i, 'end_time', e.target.value)}
-                  style={styles.input}
-                  disabled={!row.is_active}
-                />
-              </td>
-              <td style={styles.td}>
-                <input
-                  type="number"
-                  value={row.slot_duration}
-                  min={15}
-                  max={120}
-                  step={5}
-                  onChange={(e) => updateRow(i, 'slot_duration', Number(e.target.value))}
-                  style={{ ...styles.input, width: '70px' }}
-                  disabled={!row.is_active}
-                />
-              </td>
-              <td style={styles.td}>
-                <button style={styles.btn} onClick={() => saveRow(i)}>
-                  Salvar
-                </button>
-                {msgs[i] && (
-                  <span style={msgs[i].type === 'success' ? styles.successMsg : styles.errorMsg}>
-                    {' '}{msgs[i].msg}
-                  </span>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div style={stylesAv.dayCard}>
+      <div style={stylesAv.dayHeader}>
+        <span style={stylesAv.dayName}>{DAY_NAMES[dow]}</span>
+        <button
+          style={styles.btnSm}
+          onClick={() => setNewPeriod({ start_time: '09:00', end_time: '12:00', slot_duration: 60, is_active: true })}
+          disabled={newPeriod !== null}
+        >
+          + Adicionar período
+        </button>
+      </div>
+
+      {periods.length === 0 && !newPeriod && (
+        <div style={stylesAv.emptyMsg}>Nenhum período configurado.</div>
+      )}
+
+      {periods.map((p) => (
+        <div key={p.id} style={stylesAv.periodRow}>
+          <span
+            style={{ ...styles.toggle, fontSize: '16px' }}
+            title={p.is_active ? 'Clique para desativar' : 'Clique para ativar'}
+            onClick={() => handleToggle(p)}
+          >
+            {p.is_active ? '🟢' : '⚫'}
+          </span>
+          <span style={stylesAv.timeLabel}>Início</span>
+          <strong style={{ fontSize: '14px' }}>{p.start_time.slice(0, 5)}</strong>
+          <span style={stylesAv.timeLabel}>Fim</span>
+          <strong style={{ fontSize: '14px' }}>{p.end_time.slice(0, 5)}</strong>
+          <span style={{ ...stylesAv.timeLabel, marginLeft: '8px' }}>
+            {p.slot_duration} min/sessão
+          </span>
+          <button
+            style={stylesAv.removeBtn}
+            title="Remover período"
+            onClick={() => handleDelete(p.id)}
+          >
+            ×
+          </button>
+        </div>
+      ))}
+
+      {newPeriod && (
+        <div style={stylesAv.newRow}>
+          <div style={styles.fieldGroup}>
+            <span style={styles.fLabel}>Início</span>
+            <input
+              type="time"
+              value={newPeriod.start_time}
+              onChange={(e) => setNewPeriod((p) => ({ ...p, start_time: e.target.value }))}
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.fieldGroup}>
+            <span style={styles.fLabel}>Fim</span>
+            <input
+              type="time"
+              value={newPeriod.end_time}
+              onChange={(e) => setNewPeriod((p) => ({ ...p, end_time: e.target.value }))}
+              style={styles.input}
+            />
+          </div>
+          <div style={styles.fieldGroup}>
+            <span style={styles.fLabel}>Duração (min)</span>
+            <input
+              type="number"
+              value={newPeriod.slot_duration}
+              min={15}
+              max={120}
+              step={5}
+              onChange={(e) => setNewPeriod((p) => ({ ...p, slot_duration: Number(e.target.value) }))}
+              style={{ ...styles.input, width: '70px' }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', paddingBottom: '1px' }}>
+            <button style={styles.btn} onClick={handleSaveNew}>Salvar</button>
+            <button style={styles.btnSm} onClick={() => setNewPeriod(null)}>Cancelar</button>
+          </div>
+        </div>
+      )}
+
+      {msg && (
+        <div style={{ padding: '8px 20px', fontSize: '13px', color: msg.type === 'success' ? '#2E7D32' : '#C0392B' }}>
+          {msg.text}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AvailabilityTab({ availability, onReload }) {
+  return (
+    <div>
+      {DAY_NAMES.map((_, dow) => (
+        <DayRow
+          key={dow}
+          dow={dow}
+          periods={availability
+            .filter((a) => a.day_of_week === dow)
+            .map((a) => ({ ...a, start_time: a.start_time.slice(0, 5), end_time: a.end_time.slice(0, 5) }))}
+          onReload={onReload}
+        />
+      ))}
     </div>
   );
 }

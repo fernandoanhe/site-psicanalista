@@ -1,116 +1,105 @@
 const express = require('express');
 const supabase = require('../../lib/supabase');
-const { sendConfirmationToPatient, sendNotificationToAdmin } = require('../../lib/email');
+const { getPayment } = require('../../lib/mercadopago');
+const {
+  sendConfirmationToPatient,
+  sendNotificationToAdmin,
+  sendSlotConflictToAdmin,
+} = require('../../lib/email');
 
 const router = express.Router();
 
 // ------------------------------------------------------------------
-// Map PagSeguro charge/order statuses to our internal status
+// Map Mercado Pago payment statuses to internal status
 // ------------------------------------------------------------------
-function mapPagSeguroStatus(psStatus) {
-  if (!psStatus) return null;
-  const s = psStatus.toUpperCase();
-  if (['PAID', 'AUTHORIZED', 'AVAILABLE'].includes(s)) return 'paid';
-  if (['DECLINED', 'CANCELED', 'REFUNDED', 'CHARGEBACK'].includes(s)) return 'failed';
-  return null; // ignore intermediate statuses (IN_ANALYSIS, WAITING, etc.)
+function mapMPStatus(mpStatus) {
+  if (!mpStatus) return null;
+  const s = mpStatus.toLowerCase();
+  if (s === 'approved') return 'paid';
+  if (['refunded', 'charged_back'].includes(s)) return 'refunded';
+  if (['rejected', 'cancelled'].includes(s)) return 'failed';
+  return null; // pending, in_process, authorized — aguardar
 }
 
 // ------------------------------------------------------------------
-// POST /api/public/webhook/pagseguro
+// POST /api/public/webhook/mercadopago
 // ------------------------------------------------------------------
-router.post('/pagseguro', async (req, res) => {
+router.post('/mercadopago', async (req, res) => {
   try {
-    // Log raw payload for debugging
-    console.log('[WEBHOOK] PagSeguro payload:', JSON.stringify(req.body));
+    console.log('[WEBHOOK] Mercado Pago payload:', JSON.stringify(req.body));
 
-    const payload = req.body;
+    const { type, data, action } = req.body || {};
 
-    if (!payload || typeof payload !== 'object') {
-      console.warn('[WEBHOOK] Empty or invalid payload');
+    // MP envia type "payment" para cobranças PIX e cartão
+    if (type !== 'payment' && action !== 'payment.updated' && action !== 'payment.created') {
+      console.log(`[WEBHOOK] Ignorando tipo: ${type} / action: ${action}`);
       return res.status(200).json({ received: true });
     }
 
-    // ------------------------------------------------------------------
-    // PagSeguro sends either a charge or an order notification.
-    // Charge notification: { id, type, created_at, data: { id, status, ... } }
-    // Order notification:  { id, type, created_at, data: { id, charges: [{id, status}] } }
-    // ------------------------------------------------------------------
-
-    let psOrderId = null;
-    let psChargeId = null;
-    let psStatus = null;
-
-    const data = payload.data || payload;
-
-    // Charge-level notification
-    if (data.status) {
-      psStatus = data.status;
-      psChargeId = data.id;
-      psOrderId = data.id;
-    }
-
-    // Order-level notification — check charges array
-    if (data.charges && Array.isArray(data.charges) && data.charges.length > 0) {
-      const charge = data.charges[0];
-      psStatus = charge.status;
-      psChargeId = charge.id;
-      psOrderId = data.id;
-    }
-
-    if (!psStatus) {
-      console.warn('[WEBHOOK] Could not extract status from payload');
+    const paymentId = data?.id;
+    if (!paymentId) {
+      console.warn('[WEBHOOK] Sem payment ID no payload');
       return res.status(200).json({ received: true });
     }
 
-    const internalStatus = mapPagSeguroStatus(psStatus);
+    // Busca detalhes do pagamento na API do Mercado Pago
+    let mpPayment;
+    try {
+      mpPayment = await getPayment(paymentId);
+    } catch (fetchErr) {
+      console.error('[WEBHOOK] Erro ao buscar pagamento MP:', fetchErr.message);
+      return res.status(200).json({ received: true });
+    }
 
+    const mpStatus = mpPayment.status;
+    const externalReference = mpPayment.external_reference; // nosso booking ID
+    console.log(`[WEBHOOK] Payment ${paymentId} status=${mpStatus} ref=${externalReference}`);
+
+    const internalStatus = mapMPStatus(mpStatus);
     if (!internalStatus) {
-      // Status we don't care about (pending, in_analysis, etc.)
-      console.log(`[WEBHOOK] Ignoring status: ${psStatus}`);
+      console.log(`[WEBHOOK] Ignorando status intermediário: ${mpStatus}`);
       return res.status(200).json({ received: true });
     }
 
     // ------------------------------------------------------------------
-    // Find booking by payment_id or pagseguro_order_id
+    // Localizar booking por payment_id ou external_reference
     // ------------------------------------------------------------------
     let booking = null;
 
-    if (psChargeId) {
-      const { data: byCharge } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('payment_id', psChargeId)
-        .maybeSingle();
-      if (byCharge) booking = byCharge;
-    }
+    const { data: byPaymentId } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('payment_id', String(paymentId))
+      .maybeSingle();
+    if (byPaymentId) booking = byPaymentId;
 
-    if (!booking && psOrderId) {
-      const { data: byOrder } = await supabase
+    if (!booking && externalReference) {
+      const { data: byRef } = await supabase
         .from('bookings')
         .select('*')
-        .eq('pagseguro_order_id', psOrderId)
+        .eq('id', externalReference)
         .maybeSingle();
-      if (byOrder) booking = byOrder;
+      if (byRef) booking = byRef;
     }
 
     if (!booking) {
-      console.warn(`[WEBHOOK] No booking found for charge=${psChargeId} order=${psOrderId}`);
+      console.warn(`[WEBHOOK] Nenhum booking encontrado para payment_id=${paymentId} ref=${externalReference}`);
       return res.status(200).json({ received: true });
     }
 
-    // Skip if status hasn't changed
     if (booking.payment_status === internalStatus) {
-      console.log(`[WEBHOOK] Booking ${booking.id} already has status ${internalStatus}`);
+      console.log(`[WEBHOOK] Booking ${booking.id} já tem status ${internalStatus}`);
       return res.status(200).json({ received: true });
     }
 
     // ------------------------------------------------------------------
-    // Update booking status
+    // Atualizar status do booking
     // ------------------------------------------------------------------
     const { data: updatedBooking, error: updateError } = await supabase
       .from('bookings')
       .update({
         payment_status: internalStatus,
+        payment_id: String(paymentId),
         updated_at: new Date().toISOString(),
       })
       .eq('id', booking.id)
@@ -118,37 +107,42 @@ router.post('/pagseguro', async (req, res) => {
       .single();
 
     if (updateError) {
-      console.error('[WEBHOOK] Error updating booking:', updateError.message);
-      return res.status(200).json({ received: true }); // still return 200
+      // 23505 = unique violation: another paid booking already holds this slot
+      if (updateError.code === '23505') {
+        console.error(`[WEBHOOK] Horário já ocupado para booking ${booking.id}; avisando admin`);
+        try {
+          await sendSlotConflictToAdmin(booking, String(paymentId));
+        } catch (emailErr) {
+          console.error('[WEBHOOK] Erro ao enviar alerta de conflito:', emailErr.message);
+        }
+      } else {
+        console.error('[WEBHOOK] Erro ao atualizar booking:', updateError.message);
+      }
+      return res.status(200).json({ received: true });
     }
 
     // ------------------------------------------------------------------
-    // Post-payment actions
+    // Ações pós-pagamento
     // ------------------------------------------------------------------
     if (internalStatus === 'paid') {
-      // Send confirmation email to patient
       try {
         await sendConfirmationToPatient(updatedBooking);
-        console.log(`[WEBHOOK] Confirmation email sent to ${updatedBooking.patient_email}`);
+        console.log(`[WEBHOOK] Email de confirmação enviado para ${updatedBooking.patient_email}`);
       } catch (emailErr) {
-        console.error('[WEBHOOK] Error sending patient confirmation:', emailErr.message);
+        console.error('[WEBHOOK] Erro ao enviar email ao paciente:', emailErr.message);
       }
 
-      // Send notification email to admin
       try {
         await sendNotificationToAdmin(updatedBooking);
-        console.log('[WEBHOOK] Admin notification email sent');
+        console.log('[WEBHOOK] Email de notificação enviado ao admin');
       } catch (emailErr) {
-        console.error('[WEBHOOK] Error sending admin notification:', emailErr.message);
+        console.error('[WEBHOOK] Erro ao enviar email ao admin:', emailErr.message);
       }
     }
-
-    // For 'failed': slot is automatically freed since only 'paid' slots are considered taken
 
     return res.status(200).json({ received: true });
   } catch (err) {
-    console.error('[POST /webhook/pagseguro]', err.message, err.stack);
-    // Always return 200 to PagSeguro to prevent retries for server errors we've logged
+    console.error('[POST /webhook/mercadopago]', err.message, err.stack);
     return res.status(200).json({ received: true });
   }
 });

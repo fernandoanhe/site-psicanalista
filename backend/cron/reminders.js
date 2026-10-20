@@ -1,7 +1,10 @@
 const express = require('express');
-const cron = require('node-cron');
 const supabase = require('../lib/supabase');
 const { sendReminderToPatient, sendReminderToAdmin } = require('../lib/email');
+const { nowSaoPaulo } = require('../lib/slots');
+
+// Sessions starting within this many minutes get their reminder
+const REMINDER_WINDOW_MINUTES = 35;
 
 const router = express.Router();
 
@@ -9,47 +12,42 @@ const router = express.Router();
 // Core reminder logic (shared between HTTP trigger and cron)
 // ------------------------------------------------------------------
 async function processReminders() {
-  // Get current time in America/Sao_Paulo
-  const nowSP = new Date().toLocaleString('sv-SE', {
-    timeZone: 'America/Sao_Paulo',
-  });
-  // 'sv-SE' gives 'YYYY-MM-DD HH:MM:SS'
-  const [datePart, timePart] = nowSP.split(' ');
-  const [h, m] = timePart.split(':').map(Number);
+  const now = nowSaoPaulo();
+  const windowStart = now.minutes;
+  const windowEnd = now.minutes + REMINDER_WINDOW_MINUTES;
 
-  // Target = now + 30 minutes
-  const targetMinutes = h * 60 + m + 30;
-  const targetH = Math.floor(targetMinutes / 60) % 24;
-  const targetM = targetMinutes % 60;
-
-  // Window: target ± 2 minutes
-  const windowStart = targetMinutes - 2;
-  const windowEnd = targetMinutes + 2;
-
-  // Convert window boundaries to HH:MM strings
   function minsToTime(mins) {
-    const hh = Math.floor(((mins % 1440) + 1440) % 1440 / 60);
-    const mm = ((mins % 60) + 60) % 60;
-    return `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+    return `${String(Math.floor(mins / 60)).padStart(2, '0')}:${String(mins % 60).padStart(2, '0')}`;
   }
 
-  const windowStartTime = minsToTime(windowStart);
-  const windowEndTime = minsToTime(windowEnd);
-
-  console.log(
-    `[REMINDERS] Date: ${datePart}, target: ${String(targetH).padStart(2,'0')}:${String(targetM).padStart(2,'0')}, window: ${windowStartTime}–${windowEndTime}`
-  );
-
-  // Query bookings that need reminders
-  // Note: time comparison works correctly as HH:MM strings in Postgres
-  const { data: bookings, error } = await supabase
+  // Any paid session starting within the next REMINDER_WINDOW_MINUTES that
+  // hasn't been reminded yet. Working with a window (instead of an exact
+  // minute) makes this safe for any cron frequency up to the window size.
+  let query = supabase
     .from('bookings')
     .select('*')
     .eq('payment_status', 'paid')
-    .eq('reminder_sent', false)
-    .eq('session_date', datePart)
-    .gte('session_time', windowStartTime)
-    .lte('session_time', windowEndTime);
+    .eq('reminder_sent', false);
+
+  if (windowEnd < 1440) {
+    query = query
+      .eq('session_date', now.date)
+      .gte('session_time', minsToTime(windowStart))
+      .lte('session_time', minsToTime(windowEnd));
+  } else {
+    // Window crosses midnight: today until 23:59 or tomorrow from 00:00
+    const tomorrow = new Date(`${now.date}T12:00:00Z`);
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+    query = query.or(
+      `and(session_date.eq.${now.date},session_time.gte.${minsToTime(windowStart)}),` +
+      `and(session_date.eq.${tomorrowStr},session_time.lte.${minsToTime(windowEnd - 1440)})`
+    );
+  }
+
+  console.log(`[REMINDERS] ${now.date} window: ${minsToTime(windowStart)} + ${REMINDER_WINDOW_MINUTES}min`);
+
+  const { data: bookings, error } = await query;
 
   if (error) {
     console.error('[REMINDERS] Query error:', error.message);
@@ -99,26 +97,39 @@ async function processReminders() {
 }
 
 // ------------------------------------------------------------------
-// node-cron: run every minute
+// Remove unpaid bookings older than 30 days (see privacy policy)
 // ------------------------------------------------------------------
-cron.schedule('* * * * *', async () => {
-  try {
-    const result = await processReminders();
-    if (result.processed > 0) {
-      console.log(`[CRON] Reminders processed: ${result.processed}`);
-    }
-  } catch (err) {
-    console.error('[CRON] Unexpected error:', err.message);
+async function purgeUnpaidBookings() {
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+  const { error, count } = await supabase
+    .from('bookings')
+    .delete({ count: 'exact' })
+    .in('payment_status', ['pending', 'failed'])
+    .lt('created_at', cutoff);
+
+  if (error) {
+    console.error('[REMINDERS] Purge error:', error.message);
+    return 0;
   }
-});
+  return count || 0;
+}
 
 // ------------------------------------------------------------------
 // HTTP trigger: GET /api/cron/reminders
 // (for external cron services like Vercel Cron or EasyCron)
 // ------------------------------------------------------------------
 router.get('/', async (req, res) => {
+  // Vercel Cron sends "Authorization: Bearer <CRON_SECRET>"; external
+  // services can use the same header or ?secret=<CRON_SECRET>
+  const secret = process.env.CRON_SECRET;
+  const provided = (req.headers.authorization || '').replace(/^Bearer /, '') || req.query.secret;
+  if (!secret || provided !== secret) {
+    return res.status(401).json({ error: 'Não autorizado' });
+  }
+
   try {
     const result = await processReminders();
+    result.purged = await purgeUnpaidBookings();
     return res.json(result);
   } catch (err) {
     console.error('[GET /cron/reminders]', err.message);
@@ -127,3 +138,4 @@ router.get('/', async (req, res) => {
 });
 
 module.exports = router;
+module.exports.processReminders = processReminders;

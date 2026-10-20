@@ -1,6 +1,7 @@
 const express = require('express');
 const supabase = require('../../lib/supabase');
-const { createPixCharge, createCreditCardOrder } = require('../../lib/pagseguro');
+const { createPixCharge, createCreditCardOrder } = require('../../lib/mercadopago');
+const { getFreeSlots } = require('../../lib/slots');
 
 const router = express.Router();
 
@@ -40,47 +41,44 @@ router.post('/', async (req, res) => {
         .json({ error: 'payment_method deve ser "pix" ou "credit_card"' });
     }
 
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(session_date) || !/^\d{2}:\d{2}/.test(session_time)) {
+      return res.status(400).json({ error: 'Data ou horário em formato inválido' });
+    }
+
+    if (typeof patient_name !== 'string' || patient_name.trim().length < 2 || patient_name.length > 200) {
+      return res.status(400).json({ error: 'Nome inválido' });
+    }
+
+    if (typeof patient_email !== 'string' || patient_email.length > 200 ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patient_email.trim())) {
+      return res.status(400).json({ error: 'E-mail inválido' });
+    }
+
+    if (patient_phone && (typeof patient_phone !== 'string' || patient_phone.length > 30)) {
+      return res.status(400).json({ error: 'Telefone inválido' });
+    }
+
     // Normalise time to HH:MM
     const timeNorm = session_time.slice(0, 5);
 
     // ------------------------------------------------------------------
-    // 2. Verify slot is available (not already booked or blocked)
+    // 2. Verify slot is available (same rules as the public calendar:
+    //    weekly schedule, blocked dates/slots, paid and held bookings)
     // ------------------------------------------------------------------
-
-    // Check for conflicting paid booking
-    const { data: conflictingBooking } = await supabase
+    // A patient retrying the same slot (e.g. switching PIX → card) must not
+    // be blocked by their own pending hold, so release it first.
+    await supabase
       .from('bookings')
-      .select('id')
+      .update({ payment_status: 'failed', updated_at: new Date().toISOString() })
+      .eq('patient_email', patient_email.trim().toLowerCase())
       .eq('session_date', session_date)
       .eq('session_time', timeNorm)
-      .eq('payment_status', 'paid')
-      .maybeSingle();
+      .eq('payment_status', 'pending');
 
-    if (conflictingBooking) {
+    const [day] = await getFreeSlots(session_date, session_date);
+
+    if (!day || !day.slots.includes(timeNorm)) {
       return res.status(409).json({ error: 'Este horário não está mais disponível' });
-    }
-
-    // Check for blocked date
-    const { data: blockedDate } = await supabase
-      .from('blocked_dates')
-      .select('id')
-      .eq('date', session_date)
-      .maybeSingle();
-
-    if (blockedDate) {
-      return res.status(409).json({ error: 'Esta data não está disponível para agendamento' });
-    }
-
-    // Check for blocked slot
-    const { data: blockedSlot } = await supabase
-      .from('blocked_slots')
-      .select('id')
-      .eq('date', session_date)
-      .eq('time', timeNorm)
-      .maybeSingle();
-
-    if (blockedSlot) {
-      return res.status(409).json({ error: 'Este horário não está disponível' });
     }
 
     // ------------------------------------------------------------------
@@ -148,7 +146,6 @@ router.post('/', async (req, res) => {
         .from('bookings')
         .update({
           payment_id: chargeResult.chargeId,
-          pagseguro_order_id: chargeResult.chargeId,
           updated_at: new Date().toISOString(),
         })
         .eq('id', bookingId);
@@ -156,6 +153,7 @@ router.post('/', async (req, res) => {
       return res.status(201).json({
         booking_id: bookingId,
         payment_method: 'pix',
+        checkout_url: chargeResult.checkoutUrl,
         qr_code_image: chargeResult.qrCodeImage,
         qr_code_text: chargeResult.qrCodeText,
         expires_at: chargeResult.expiresAt,
@@ -189,7 +187,7 @@ router.post('/', async (req, res) => {
       await supabase
         .from('bookings')
         .update({
-          pagseguro_order_id: orderResult.orderId,
+          payment_id: String(orderResult.orderId),
           updated_at: new Date().toISOString(),
         })
         .eq('id', bookingId);

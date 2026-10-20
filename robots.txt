@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://[DOMINIO].com.br/sitemap.xml
+Sitemap: https://fernandopsicanalista.com.br/sitemap.xml

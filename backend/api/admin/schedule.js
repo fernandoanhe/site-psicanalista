@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
 
 // ------------------------------------------------------------------
 // POST /api/admin/schedule/availability
-// Upsert an availability record by day_of_week
+// Insert a new availability period for a day
 // ------------------------------------------------------------------
 router.post('/availability', async (req, res) => {
   try {
@@ -63,27 +63,52 @@ router.post('/availability', async (req, res) => {
         .json({ error: 'start_time e end_time são obrigatórios' });
     }
 
-    const record = {
-      day_of_week: Number(day_of_week),
-      start_time,
-      end_time,
-      slot_duration: slot_duration ? Number(slot_duration) : 60,
-      is_active: is_active !== undefined ? Boolean(is_active) : true,
-      updated_at: new Date().toISOString(),
-    };
-
     const { data, error } = await supabase
       .from('availability')
-      .upsert(record, { onConflict: 'day_of_week' })
+      .insert({
+        day_of_week: Number(day_of_week),
+        start_time,
+        end_time,
+        slot_duration: slot_duration ? Number(slot_duration) : 60,
+        is_active: is_active !== undefined ? Boolean(is_active) : true,
+      })
       .select()
       .single();
 
     if (error) throw error;
-
-    return res.json(data);
+    return res.status(201).json(data);
   } catch (err) {
     console.error('[POST /schedule/availability]', err.message);
     return res.status(500).json({ error: 'Erro ao salvar disponibilidade' });
+  }
+});
+
+// ------------------------------------------------------------------
+// PUT /api/admin/schedule/availability/:id
+// Update an existing availability period
+// ------------------------------------------------------------------
+router.put('/availability/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { start_time, end_time, slot_duration, is_active } = req.body;
+
+    const { data, error } = await supabase
+      .from('availability')
+      .update({
+        ...(start_time !== undefined && { start_time }),
+        ...(end_time !== undefined && { end_time }),
+        ...(slot_duration !== undefined && { slot_duration: Number(slot_duration) }),
+        ...(is_active !== undefined && { is_active: Boolean(is_active) }),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return res.json(data);
+  } catch (err) {
+    console.error('[PUT /schedule/availability/:id]', err.message);
+    return res.status(500).json({ error: 'Erro ao atualizar disponibilidade' });
   }
 });
 
