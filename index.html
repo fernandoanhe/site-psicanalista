@@ -1865,11 +1865,15 @@
     showMonth();
 
     /* ============================================================
-       6. Valor da sessão (conteúdo editável no painel)
+       6. Imagem do hero e valor da sessão (conteúdo editável no painel)
     ============================================================ */
     fetch(API_BASE + '/api/public/content')
       .then(res => res.ok ? res.json() : null)
       .then(content => {
+        if (content && content.hero_bg) {
+          document.querySelector('.hero').style.backgroundImage =
+            'url("' + encodeURI(content.hero_bg) + '")';
+        }
         const price = content && parseFloat(content.session_price);
         if (!price) return;
         const el = document.getElementById('sessionPrice');
