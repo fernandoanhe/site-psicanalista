@@ -15,6 +15,7 @@ const SECTION_LABELS = {
   rodape:         'Rodapé',
   nav:            'Navegação',
   config:         'Configurações',
+  agendamento:    'Agendamento',
 };
 
 const styles = {
@@ -211,6 +212,8 @@ function ContentItem({ item, onSaved }) {
         ) : (
           <input
             type={item.type === 'number' ? 'number' : 'text'}
+            step={item.type === 'number' ? '0.01' : undefined}
+            min={item.type === 'number' ? '0' : undefined}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             style={styles.input}
@@ -259,7 +262,12 @@ export default function Content() {
     return acc;
   }, {});
 
-  const sectionOrder = ['hero', 'sobre', 'especialidades', 'online', 'cta', 'rodape', 'nav', 'config'];
+  // Known sections first, then any other section found in the database
+  const knownOrder = ['config', 'hero', 'sobre', 'especialidades', 'online', 'cta', 'rodape', 'nav'];
+  const sectionOrder = [
+    ...knownOrder,
+    ...Object.keys(grouped).filter((s) => !knownOrder.includes(s)),
+  ];
 
   return (
     <div style={styles.page}>

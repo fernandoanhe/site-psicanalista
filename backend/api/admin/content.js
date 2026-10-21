@@ -80,9 +80,19 @@ router.put('/:key', async (req, res) => {
       return res.status(400).json({ error: 'Campo "value" é obrigatório' });
     }
 
+    // The session price is charged at checkout: accept only a positive amount
+    let newValue = value;
+    if (key === 'session_price') {
+      const price = Number(String(value).replace(',', '.'));
+      if (!Number.isFinite(price) || price < 1 || price > 10000) {
+        return res.status(400).json({ error: 'Informe um valor entre R$ 1,00 e R$ 10.000,00' });
+      }
+      newValue = price.toFixed(2);
+    }
+
     const { data, error } = await supabase
       .from('site_content')
-      .update({ value, updated_at: new Date().toISOString() })
+      .update({ value: newValue, updated_at: new Date().toISOString() })
       .eq('key', key)
       .select()
       .single();

@@ -51,6 +51,23 @@ function esc(value) {
     .replace(/'/g, '&#39;');
 }
 
+// 'HH:MM:SS' (as stored by Postgres) → 'HH:MM'
+function fmtTime(time) {
+  return String(time ?? '').slice(0, 5);
+}
+
+// Google Meet link block (only when the calendar integration created one)
+function meetBlock(booking, label) {
+  if (!booking.meet_link) return '';
+  const url = esc(booking.meet_link);
+  return `
+    <div class="highlight-box">
+      <strong>${label}</strong><br/>
+      <a class="btn" href="${url}">Entrar no Google Meet</a><br/>
+      <span style="font-size:13px;color:#8B6B4A;">${url}</span>
+    </div>`;
+}
+
 function formatDatePT(dateStr) {
   // dateStr: 'YYYY-MM-DD'
   const [year, month, day] = dateStr.split('-').map(Number);
@@ -132,18 +149,23 @@ async function sendConfirmationToPatient(booking) {
 
     <table class="detail-table">
       <tr><td>Data</td><td>${formattedDate}</td></tr>
-      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>Horário</td><td>${fmtTime(booking.session_time)}</td></tr>
       <tr><td>Duração</td><td>50 minutos</td></tr>
       <tr><td>Modalidade</td><td>Online via Google Meet</td></tr>
       <tr><td>Valor</td><td>R$ ${Number(booking.payment_amount).toFixed(2).replace('.', ',')}</td></tr>
       <tr><td>Pagamento</td><td>${paymentMethodLabel}</td></tr>
     </table>
 
+    ${booking.meet_link ? `
+    ${meetBlock(booking, 'Link da sessão (Google Meet)')}
+    <p>Você também recebeu um convite do Google Agenda com este link. No horário marcado,
+    é só entrar pelo botão acima. Escolha um local tranquilo e com boa conexão à internet.</p>
+    ` : `
     <div class="highlight-box">
       <strong>Como funciona?</strong><br/>
-      Você receberá o link do Google Meet por e-mail próximo ao horário da sessão.
+      Você receberá o link do Google Meet por e-mail antes do horário da sessão.
       Certifique-se de estar em um local tranquilo e com boa conexão à internet.
-    </div>
+    </div>`}
 
     <p>Caso precise cancelar ou remarcar, entre em contato com antecedência mínima de 24 horas.</p>
     <p>Até breve!</p>
@@ -152,7 +174,7 @@ async function sendConfirmationToPatient(booking) {
 
   await sendMail({
     to: booking.patient_email,
-    subject: `Sessão confirmada — ${formattedDate} às ${booking.session_time}`,
+    subject: `Sessão confirmada — ${formattedDate} às ${fmtTime(booking.session_time)}`,
     html,
   });
 
@@ -184,21 +206,23 @@ async function sendNotificationToAdmin(booking) {
       <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
       <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
       <tr><td>Data</td><td>${formattedDate}</td></tr>
-      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>Horário</td><td>${fmtTime(booking.session_time)}</td></tr>
       <tr><td>Valor</td><td>R$ ${Number(booking.payment_amount).toFixed(2).replace('.', ',')}</td></tr>
       <tr><td>Método de pagamento</td><td>${paymentMethodLabel}</td></tr>
       <tr><td>ID do pedido</td><td>${booking.pagseguro_order_id || booking.payment_id || '—'}</td></tr>
     </table>
 
-    <div class="highlight-box">
-      Acesse o painel administrativo para visualizar todos os agendamentos.
-    </div>
+    ${booking.meet_link
+      ? meetBlock(booking, 'Evento criado na sua agenda com o link do Meet:')
+      : `<div class="highlight-box">
+      Nenhum evento foi criado na agenda: envie o link do Google Meet ao paciente.
+    </div>`}
     `
   );
 
   await sendMail({
     to: process.env.EMAIL_ADMIN,
-    subject: `[Novo agendamento] ${booking.patient_name} — ${formattedDate} às ${booking.session_time}`,
+    subject: `[Novo agendamento] ${booking.patient_name} — ${formattedDate} às ${fmtTime(booking.session_time)}`,
     html,
   });
 
@@ -225,7 +249,7 @@ async function sendReminderToPatient(booking) {
 
     <table class="detail-table">
       <tr><td>Data</td><td>${formattedDate}</td></tr>
-      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>Horário</td><td>${fmtTime(booking.session_time)}</td></tr>
       <tr><td>Modalidade</td><td>Online via Google Meet</td></tr>
     </table>
 
@@ -236,14 +260,16 @@ async function sendReminderToPatient(booking) {
       • Tenha fones de ouvido à mão para maior privacidade
     </div>
 
-    <p>O link do Google Meet será compartilhado no início da sessão. Fique atento ao seu e-mail.</p>
+    ${booking.meet_link
+      ? meetBlock(booking, 'Link da sessão (Google Meet)')
+      : '<p>O link do Google Meet será enviado por e-mail. Fique atento à sua caixa de entrada.</p>'}
     <p>Até já!</p>
     `
   );
 
   await sendMail({
     to: booking.patient_email,
-    subject: `Lembrete: sua sessão começa em 30 minutos — ${booking.session_time}`,
+    subject: `Lembrete: sua sessão começa em 30 minutos — ${fmtTime(booking.session_time)}`,
     html,
   });
 
@@ -272,18 +298,20 @@ async function sendReminderToAdmin(booking) {
       <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
       <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
       <tr><td>Data</td><td>${formattedDate}</td></tr>
-      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>Horário</td><td>${fmtTime(booking.session_time)}</td></tr>
     </table>
 
-    <div class="highlight-box">
+    ${booking.meet_link
+      ? meetBlock(booking, 'Link da sessão:')
+      : `<div class="highlight-box">
       Lembre-se de abrir a sala do Google Meet antes do horário.
-    </div>
+    </div>`}
     `
   );
 
   await sendMail({
     to: process.env.EMAIL_ADMIN,
-    subject: `[Lembrete] Sessão com ${booking.patient_name} às ${booking.session_time}`,
+    subject: `[Lembrete] Sessão com ${booking.patient_name} às ${fmtTime(booking.session_time)}`,
     html,
   });
 
@@ -312,7 +340,7 @@ async function sendSlotConflictToAdmin(booking, paymentId) {
       <tr><td>E-mail</td><td>${esc(booking.patient_email)}</td></tr>
       <tr><td>Telefone</td><td>${esc(booking.patient_phone || '—')}</td></tr>
       <tr><td>Data</td><td>${formattedDate}</td></tr>
-      <tr><td>Horário</td><td>${booking.session_time}</td></tr>
+      <tr><td>Horário</td><td>${fmtTime(booking.session_time)}</td></tr>
       <tr><td>ID do pagamento</td><td>${esc(paymentId)}</td></tr>
     </table>
     `

@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
   patient_name VARCHAR(200) NOT NULL,
   patient_email VARCHAR(200) NOT NULL,
-  patient_phone VARCHAR(30),
+  patient_phone VARCHAR(30) NOT NULL,
   session_date DATE NOT NULL,
   session_time TIME NOT NULL,
   payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('pix', 'credit_card')),
@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS bookings (
   pagseguro_order_id VARCHAR(100),
   payment_id VARCHAR(100),
   reminder_sent BOOLEAN NOT NULL DEFAULT FALSE,
+  meet_link TEXT,
+  calendar_event_id VARCHAR(200),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

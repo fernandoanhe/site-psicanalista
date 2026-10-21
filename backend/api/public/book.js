@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
     const missing = [];
     if (!patient_name) missing.push('patient_name');
     if (!patient_email) missing.push('patient_email');
+    if (!patient_phone) missing.push('patient_phone');
     if (!session_date) missing.push('session_date');
     if (!session_time) missing.push('session_time');
     if (!payment_method) missing.push('payment_method');
@@ -54,7 +55,7 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'E-mail inválido' });
     }
 
-    if (patient_phone && (typeof patient_phone !== 'string' || patient_phone.length > 30)) {
+    if (typeof patient_phone !== 'string' || patient_phone.trim().length < 8 || patient_phone.length > 30) {
       return res.status(400).json({ error: 'Telefone inválido' });
     }
 

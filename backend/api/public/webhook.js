@@ -6,6 +6,7 @@ const {
   sendNotificationToAdmin,
   sendSlotConflictToAdmin,
 } = require('../../lib/email');
+const { isCalendarEnabled, createSessionEvent, cancelSessionEvent } = require('../../lib/calendar');
 
 const router = express.Router();
 
@@ -125,6 +126,23 @@ router.post('/mercadopago', async (req, res) => {
     // Ações pós-pagamento
     // ------------------------------------------------------------------
     if (internalStatus === 'paid') {
+      // Google Calendar event with its own Meet link (skipped if not configured)
+      if (isCalendarEnabled() && !updatedBooking.calendar_event_id) {
+        try {
+          const { eventId, meetLink } = await createSessionEvent(updatedBooking);
+          const { error: linkError } = await supabase
+            .from('bookings')
+            .update({ calendar_event_id: eventId, meet_link: meetLink })
+            .eq('id', updatedBooking.id);
+          if (linkError) console.error('[WEBHOOK] Erro ao salvar link do Meet:', linkError.message);
+          updatedBooking.calendar_event_id = eventId;
+          updatedBooking.meet_link = meetLink;
+          console.log(`[WEBHOOK] Evento criado na agenda para booking ${updatedBooking.id}`);
+        } catch (calErr) {
+          console.error('[WEBHOOK] Erro ao criar evento na agenda:', calErr.message);
+        }
+      }
+
       try {
         await sendConfirmationToPatient(updatedBooking);
         console.log(`[WEBHOOK] Email de confirmação enviado para ${updatedBooking.patient_email}`);
@@ -137,6 +155,16 @@ router.post('/mercadopago', async (req, res) => {
         console.log('[WEBHOOK] Email de notificação enviado ao admin');
       } catch (emailErr) {
         console.error('[WEBHOOK] Erro ao enviar email ao admin:', emailErr.message);
+      }
+    }
+
+    // Refund / chargeback: remove the session from the calendar
+    if (internalStatus === 'refunded' && updatedBooking.calendar_event_id && isCalendarEnabled()) {
+      try {
+        await cancelSessionEvent(updatedBooking.calendar_event_id);
+        console.log(`[WEBHOOK] Evento cancelado na agenda para booking ${updatedBooking.id}`);
+      } catch (calErr) {
+        console.error('[WEBHOOK] Erro ao cancelar evento na agenda:', calErr.message);
       }
     }
 
