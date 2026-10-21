@@ -1,6 +1,31 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// ------------------------------------------------------------------
+// SMTP transport (Gmail by default; SMTP_PASS is a Google app password)
+// ------------------------------------------------------------------
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST || 'smtp.gmail.com',
+  port: Number(process.env.SMTP_PORT) || 465,
+  secure: (Number(process.env.SMTP_PORT) || 465) === 465,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
+
+// Gmail only accepts the authenticated account (or its aliases) as sender
+const FROM = process.env.EMAIL_FROM || `"Fernando Anhê" <${process.env.SMTP_USER}>`;
+
+// Throws on failure so callers can log it
+function sendMail({ to, subject, html }) {
+  return transporter.sendMail({
+    from: FROM,
+    replyTo: process.env.EMAIL_ADMIN || undefined,
+    to,
+    subject,
+    html,
+  });
+}
 
 // ------------------------------------------------------------------
 // Helper: format a date string (YYYY-MM-DD) as Portuguese long form
@@ -72,8 +97,7 @@ function baseEmail(title, bodyHtml) {
       ${bodyHtml}
     </div>
     <div class="footer">
-      <p>Este é um e-mail automático. Por favor, não responda diretamente.</p>
-      <p>Em caso de dúvidas, entre em contato: ${process.env.EMAIL_ADMIN || ''}</p>
+      <p>Se precisar, é só responder este e-mail.</p>
     </div>
   </div>
 </body>
@@ -126,8 +150,7 @@ async function sendConfirmationToPatient(booking) {
     `
   );
 
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: booking.patient_email,
     subject: `Sessão confirmada — ${formattedDate} às ${booking.session_time}`,
     html,
@@ -173,8 +196,7 @@ async function sendNotificationToAdmin(booking) {
     `
   );
 
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: process.env.EMAIL_ADMIN,
     subject: `[Novo agendamento] ${booking.patient_name} — ${formattedDate} às ${booking.session_time}`,
     html,
@@ -219,8 +241,7 @@ async function sendReminderToPatient(booking) {
     `
   );
 
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: booking.patient_email,
     subject: `Lembrete: sua sessão começa em 30 minutos — ${booking.session_time}`,
     html,
@@ -260,8 +281,7 @@ async function sendReminderToAdmin(booking) {
     `
   );
 
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: process.env.EMAIL_ADMIN,
     subject: `[Lembrete] Sessão com ${booking.patient_name} às ${booking.session_time}`,
     html,
@@ -298,8 +318,7 @@ async function sendSlotConflictToAdmin(booking, paymentId) {
     `
   );
 
-  await resend.emails.send({
-    from: process.env.EMAIL_FROM,
+  await sendMail({
     to: process.env.EMAIL_ADMIN,
     subject: `[AÇÃO NECESSÁRIA] Pagamento em horário ocupado — ${booking.patient_name}`,
     html,
