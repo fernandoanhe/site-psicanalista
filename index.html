@@ -349,7 +349,7 @@
     ============================================================ */
     .hero {
       position: relative;
-      background-image: url("https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=80");
+      background-color: #3a2a1c;
       background-size: cover;
       background-position: center 40%;
       padding: 130px 40px;
@@ -375,7 +375,8 @@
     /* Label no hero — sobrepõe o .section-label base */
     .hero .section-label {
       color: rgba(255,255,255,0.65);
-      border-left-color: rgba(255,255,255,0.4);
+      border-left: none;
+      padding-left: 0;
       display: block;
     }
 
@@ -1264,6 +1265,15 @@
          HERO
     ============================================================ -->
     <section class="hero" aria-label="Apresentação">
+      <script>
+        // Aplica a última imagem do hero antes da primeira pintura da tela
+        try {
+          var savedHeroBg = localStorage.getItem('hero_bg');
+          if (savedHeroBg) {
+            document.currentScript.parentNode.style.backgroundImage = 'url("' + encodeURI(savedHeroBg) + '")';
+          }
+        } catch (e) {}
+      </script>
       <div class="hero-inner">
         <span class="section-label">Psicanalista Online</span>
         <h1>
@@ -1867,12 +1877,18 @@
     /* ============================================================
        6. Imagem do hero e valor da sessão (conteúdo editável no painel)
     ============================================================ */
+    // A última imagem vista já foi aplicada logo no início do hero;
+    // aqui ela é atualizada com o valor do painel e guardada no navegador
+    function setHeroBg(url) {
+      document.querySelector('.hero').style.backgroundImage = 'url("' + encodeURI(url) + '")';
+    }
+
     fetch(API_BASE + '/api/public/content')
       .then(res => res.ok ? res.json() : null)
       .then(content => {
         if (content && content.hero_bg) {
-          document.querySelector('.hero').style.backgroundImage =
-            'url("' + encodeURI(content.hero_bg) + '")';
+          setHeroBg(content.hero_bg);
+          try { localStorage.setItem('hero_bg', content.hero_bg); } catch (e) {}
         }
         const price = content && parseFloat(content.session_price);
         if (!price) return;
