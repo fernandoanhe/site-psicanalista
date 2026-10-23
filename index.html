@@ -452,28 +452,27 @@
       margin-bottom: 14px;
       line-height: 1.8;
     }
-    .sobre-counters {
+    .sobre-formacao {
+      list-style: none;
+      margin: 22px 0 0;
+      padding: 0;
       display: flex;
-      gap: 40px;
-      margin-top: 30px;
-      padding-top: 24px;
-      border-top: 1px solid #E8D8C8;
+      flex-direction: column;
+      gap: 10px;
     }
-    .counter-item { display: flex; flex-direction: column; gap: 4px; }
-    .counter-value {
-      font-family: var(--font-heading);
-      font-size: 48px;
-      font-weight: 500;
+    .sobre-formacao li {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--color-text-body);
+      line-height: 1.5;
+    }
+    .sobre-formacao i {
       color: var(--color-primary);
-      line-height: 1;
-    }
-    .counter-label {
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--color-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-size: 13px;
+      width: 16px;
+      flex-shrink: 0;
     }
 
     /* ============================================================
@@ -1307,26 +1306,15 @@
           <span class="section-label">Sobre mim</span>
           <h2>Fernando Anhê</h2>
           <p>Olá, eu sou Fernando Anhê.</p>
-          <p>Sou psicanalista, membro da Sociedade Psicanalítica Sigmund Freud de São Paulo e pós-graduando em Psicanálise pela FAAP. Atendo adultos online há 5 anos.</p>
-          <p>Tenho também uma longa trajetória como professor universitário — lecionei por mais de uma década na FGV e no Unisalesiano. Pessoas são minha maior curiosidade, e cuidar de quem chega até mim é o que me move.</p>
-          <p>Ofereço um espaço seguro, sigiloso e sem julgamentos. Um lugar para você falar — e se entender melhor.</p>
+          <p>Sou psicanalista, membro da Sociedade Psicanalítica Sigmund Freud de São Paulo e pós-graduando em Psicanálise pela PUC. Atendo adultos online há 5 anos.</p>
+          <p>Tenho também uma longa trajetória como professor universitário — lecionei por mais de uma década na FGV e no Unisalesiano. Ofereço um espaço seguro, sigiloso e sem julgamentos. Um lugar para você falar — e se entender melhor.</p>
 
-          <div class="sobre-counters">
-            <div class="counter-item">
-              <span class="counter-value"
-                    data-target="5"
-                    data-prefix="+"
-                    id="counter-anos">+0</span>
-              <span class="counter-label">Anos de Experiência</span>
-            </div>
-            <div class="counter-item">
-              <span class="counter-value"
-                    data-target="1000"
-                    data-prefix="+"
-                    id="counter-pacientes">+0</span>
-              <span class="counter-label">Pacientes Atendidos</span>
-            </div>
-          </div>
+          <ul class="sobre-formacao">
+            <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>Pós-graduação em Psicanálise PUC</li>
+            <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>Membro da Sociedade Psicanalítica Sigmund Freud de São Paulo</li>
+            <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>Professor por mais de uma década</li>
+            <li><i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>Mestrado UNESP / MBA FGV e USP</li>
+          </ul>
         </div>
 
       </div>
@@ -1648,36 +1636,6 @@
         mobileMenu.setAttribute('aria-hidden', 'true');
       });
     });
-
-    /* ============================================================
-       3. Contadores animados
-    ============================================================ */
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-
-    function animateCounter(el, target, duration) {
-      const prefix    = el.dataset.prefix || '';
-      const startTime = performance.now();
-
-      function tick(now) {
-        const progress = Math.min((now - startTime) / duration, 1);
-        const value    = Math.round(easeOutCubic(progress) * target);
-        el.textContent = prefix + (target >= 1000 ? value.toLocaleString('pt-BR') : value);
-        if (progress < 1) requestAnimationFrame(tick);
-      }
-      requestAnimationFrame(tick);
-    }
-
-    const counterObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const el = entry.target;
-          animateCounter(el, parseInt(el.dataset.target, 10), 1500);
-          counterObserver.unobserve(el);
-        }
-      });
-    }, { threshold: 0.5 });
-
-    document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
 
     /* ============================================================
        4. Animações de entrada via IntersectionObserver
